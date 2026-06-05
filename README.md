@@ -208,7 +208,7 @@ The normalized spherical ternary operator gives a more regular field profile tha
 
 ### Newton-Raphson convergence
 
-On a \(100^3\) grid for a three-primitive composite scene, the normalized spherical version reaches **100% convergence**, with an average of **4.64 iterations** and an average residual of **6.51e-08**. In the same benchmark, the unnormalized directional version suffers from far-field gradient vanishing and fails on a large fraction of the sampled points.
+On a $100^{3}$ grid for a three-primitive composite scene, the normalized spherical version reaches **100% convergence**, with an average of **4.64 iterations** and an average residual of **6.51e-08**. In the same benchmark, the unnormalized directional version suffers from far-field gradient vanishing and fails on a large fraction of the sampled points.
 
 ### CAD reconstruction
 
