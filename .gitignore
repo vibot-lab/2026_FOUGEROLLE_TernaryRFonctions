@@ -72,7 +72,6 @@ Release/*
 Debug/*
 *.csv
 
-*.png
 *.eps
 *.sln
 *.vcxproj*
