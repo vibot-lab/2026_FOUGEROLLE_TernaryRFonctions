@@ -11,10 +11,6 @@
 #include "Rfunctions.h"
 #include "MarchingCubes.h"
 
-
-
-
-
 // =========================================================================
 // main program for triple junction surface generation using marching cube + visualisation
 // =========================================================================
@@ -28,14 +24,12 @@ int main(int argc, char** argv) {
 
     // unique instance of controller application that accesses everything
     AppController app;
-    
+
     //current Mode controls how the program reacts (keybord, rendering, etc.)
     app.currentMode = AppController::SceneMode::CADjunction;  // used for marching cube rendering
 
     //OpenGL initialisation
     app.Init(argc, argv);
-
-    
 
     // Marching Cubes bounding box definition
     Eigen::Vector3d minBound(-1.5, -1.5, -1.5);
@@ -79,7 +73,7 @@ int main(int argc, char** argv) {
     // Select the formulation family for multi-primitive evaluation:
     // Available: TERNARY_KRF (Spherical), BINARY_RP (Binary combinations), MIN_NAIVE (Classical Min/Max)
     app.setLogic(LogicType::TERNARY_KRF);
-    
+
     // =========================================================================
     // SURFACE CONSTRUCTION AND OPTIMIZATION PIPELINE
     // =========================================================================
@@ -173,7 +167,7 @@ int main(int argc, char** argv) {
     std::cout << "[SUCCESS] Final KRF Mesh compiled successfully: " << app.Mesh.faces.size() << " triangles." << std::endl;
 
     // Launch application window loop (OpenGL / freeglut context visualization)
-    
+
     app.Run();
 
     return 0;
