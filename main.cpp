@@ -135,7 +135,6 @@ void BuildFieldSceneFromConfig(AppController& app,
         );
         break;
 
-    
     default:
         throw std::runtime_error("Unsupported field scene type.");
     }
@@ -370,7 +369,6 @@ int RunFieldRender(AppController& app, const AppConfig& config,
     app.currentMode = AppController::SceneMode::ClassicalExample;
 
     app.Init(argc, argv);
-    
 
     // Override AppController::Init() hardcoded scene with config-driven scene.
     BuildFieldSceneFromConfig(app, cfg.scene);
@@ -558,19 +556,6 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        //    << "  FIELD_RENDER\n"
-        //    << "  CAD_JUNCTION_RENDER\n"
-        //    << "  CAD_JUNCTION_BENCHMARK\n"
-        //    << "  GRADIENT_BENCHMARK\n"
-        //    << "  GRADIENT_UNBALANCED_TREE_BENCHMARK\n"
-        //    << "  NEWTON_RAPHSON_BENCHMARK\n"
-        //    << "  RFUNCTION_PERFORMANCE_BENCHMARK\n\n"
-
-        // manual parameter settings for testing...
-        //const char* argv0 = "FIELD_RENDER";
-        //const char* argv1 = "C:\\Development-C++\\2026_CAD_FOUGEROLLE_TernaryRFonctions_code\\config.yaml";
-        
-        
         const ApplicationMode mode = AppConfig::ParseApplicationMode(argv0);
 
         const std::string configPath = argv1;
@@ -586,7 +571,7 @@ int main(int argc, char** argv) {
 
         switch (mode) {
             case ApplicationMode::FIELD_RENDER:
-            {                
+            {
                 return RunFieldRender(app, config, argc, argv);
             }
 
