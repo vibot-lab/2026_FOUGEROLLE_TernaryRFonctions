@@ -66,11 +66,9 @@ void PrintInteractiveControls(ApplicationMode mode)
     std::cout << std::endl;
 }
 
-
 // ============================================================
 // Common setup
 // ============================================================
-
 void ApplyCommonConfig(AppController& app, const AppConfig& config)
 {
     const auto& common = config.common();
