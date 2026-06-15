@@ -365,7 +365,6 @@ int RunFieldRender(AppController& app, const AppConfig& config,
     }
 
     app.currentMode = AppController::SceneMode::ClassicalExample;
-
     app.Init(argc, argv);
 
     // Override AppController::Init() hardcoded scene with config-driven scene.
@@ -522,7 +521,6 @@ int RunNewtonRaphsonBenchmark(AppController& app, const AppConfig& config)
      * The other parsed parameters are available in AppConfig but require
      * extending AppController::RunNewtonRaphsonBenchmark().
      */
-
     app.RunNewtonRaphsonBenchmark(cfg.gridResolution);
 
     return 0;
