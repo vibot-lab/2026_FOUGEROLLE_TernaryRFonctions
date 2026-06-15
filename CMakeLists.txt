@@ -42,6 +42,7 @@ find_package(GLUT REQUIRED)
 set(SOURCES
     AppConfig.cpp
     AppController.cpp
+    AppConfig.cpp
     GLScene.cpp
     ImplicitObjects.cpp
     MarchingCubes.cpp
@@ -54,6 +55,7 @@ set(SOURCES
 set(HEADERS
     AppConfig.h
     AppController.h
+    AppConfig.h
     CAD_Scene.h
     GLScene.h
     ImplicitObjects.h
