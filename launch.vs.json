@@ -1,0 +1,82 @@
+{
+  "version": "0.2.1",
+  "configurations": [
+    {
+      "name": "CAD_JUNCTION_RENDER",
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "TernaryRFunctions.exe (Release\\TernaryRFunctions.exe)",
+      "args": [
+        "CAD_JUNCTION_RENDER",
+        "${workspaceRoot}\\config.yaml"
+      ],
+      "currentDir": "${workspaceRoot}"
+    },
+    {
+      "name": "FIELD_RENDER",
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "TernaryRFunctions.exe (Release\\TernaryRFunctions.exe)",
+      "args": [
+        "FIELD_RENDER",
+        "${workspaceRoot}\\config.yaml"
+      ],
+      "currentDir": "${workspaceRoot}"
+    },
+    {
+      "name": "CAD_JUNCTION_BENCHMARK",
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "TernaryRFunctions.exe (Release\\TernaryRFunctions.exe)",
+      "args": [
+        "CAD_JUNCTION_BENCHMARK",
+        "${workspaceRoot}\\config.yaml"
+      ],
+      "currentDir": "${workspaceRoot}"
+    },
+    {
+      "name": "GRADIENT_BENCHMARK",
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "TernaryRFunctions.exe (Release\\TernaryRFunctions.exe)",
+      "args": [
+        "GRADIENT_BENCHMARK",
+        "${workspaceRoot}\\config.yaml"
+      ],
+      "currentDir": "${workspaceRoot}"
+    },
+    {
+      "name": "GRADIENT_UNBALANCED_TREE_BENCHMARK",
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "TernaryRFunctions.exe (Release\\TernaryRFunctions.exe)",
+      "args": [
+        "GRADIENT_UNBALANCED_TREE_BENCHMARK",
+        "${workspaceRoot}\\config.yaml"
+      ],
+      "currentDir": "${workspaceRoot}"
+    },
+    {
+      "name": "NEWTON_RAPHSON_BENCHMARK",
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "TernaryRFunctions.exe (Release\\TernaryRFunctions.exe)",
+      "args": [
+        "NEWTON_RAPHSON_BENCHMARK",
+        "${workspaceRoot}\\config.yaml"
+      ],
+      "currentDir": "${workspaceRoot}"
+    },
+    {
+      "name": "RFUNCTION_PERFORMANCE_BENCHMARK",
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "TernaryRFunctions.exe (Release\\TernaryRFunctions.exe)",
+      "args": [
+        "RFUNCTION_PERFORMANCE_BENCHMARK",
+        "${workspaceRoot}\\config.yaml"
+      ],
+      "currentDir": "${workspaceRoot}"
+    }
+  ]
+}

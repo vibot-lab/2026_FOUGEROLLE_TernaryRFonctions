@@ -1,0 +1,23 @@
+{
+	"version": 3,
+	"configurePresets": [
+		{
+			"name": "vs2026-release",
+			"displayName": "VS2026 x64 Release with vcpkg",
+			"generator": "Visual Studio 18 2026",
+			"architecture": "x64",
+			"binaryDir": "C:/b/ternary-release",
+			"cacheVariables": {
+				"CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+				"VCPKG_TARGET_TRIPLET": "x64-windows"
+			}
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "build-release",
+			"configurePreset": "vs2026-release",
+			"configuration": "Release"
+		}
+	]
+}
