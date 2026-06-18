@@ -47,6 +47,8 @@ AppController::AppController()
     SpherEval.Init(3);       // Spherical continuous logical operators are strictly bounded to 3D spaces
 }
 
+
+//creates the 3 spheres as in the paper
 void AppController :: makeSpheres(){
 
     m_objects.clear();
@@ -64,13 +66,14 @@ void AppController::Init(int& argc, char** argv) {
 
     // classical example mode ==> simple implicit scene (3 spheres or a regular polygon)
     if (currentMode == SceneMode::ClassicalExample)
-    {   
-        // 3 spheres
-        //makeSpheres();
+    {
+ 
+        // 3 spheres as in the CAD paper
+        makeSpheres();
 
-        // regular polygon. 
+        // regular polygon.
         int n = 6; double R = 1.25;
-        makePolygon(n, R);
+        //makePolygon(n, R);
     }
 
     if (currentMode == SceneMode::BenchmarkGradient)
@@ -81,24 +84,13 @@ void AppController::Init(int& argc, char** argv) {
     if (currentMode == SceneMode::BenchmarkGradientUnbalancedTree)
     {
         // Assembles a 9-sphere symmetrical daisy pattern to evaluate deep composition cost trees
-        m_objects = MakeDaisy();
+        m_objects = MakeDaisy(1,0.5,9);
     }
 
     if (currentMode == SceneMode::NaryExample)
     {
         std::cout << "[N-ary Example] - Daisy pattern construction" << std::endl;
         m_objects = MakeDaisy(0.75, 1.0, 7);
-    }
-
-    if (currentMode == SceneMode::NaryConvexityTests)
-    {
-        std::cout << "[N-ary Convex tests] - Daisy pattern construction" << std::endl;
-        
-        //m_objects = MakeDaisy();
-        m_objects = MakeDaisy(0.85, 0.7, 7);
-
-        // Assembles a randomized multi-sphere system to identify structural convexity breakdowns
-        //MakeDaisyConvexTest(epsilon_crit, 5);
     }
 }
 
@@ -110,6 +102,10 @@ void AppController::Run() {
 // =========================================================================
 // MATHEMATICAL EVALUATION & ALGEBRAIC RECURSIVE ENGINES
 // =========================================================================
+
+// Hardcoded ternary decomposition for exactly 9 primitives (e.g., the Daisy flower scene).
+// WARNING: This specific implementation assumes X contains 9 elements 
+// and bubbles up 1 recursive level to compute the final composite potential.
 
 double AppController::EvaluateRecursiveSpherical(const Eigen::VectorXd& X, bool inter, RCore::SphericalEvaluator& eval) {
     int n = static_cast<int>(X.size());
@@ -235,12 +231,6 @@ AppController::ComputeFullGridData(unsigned int sampling)
                     RFarray_local[6][0] = RFarray_local[6][1] = 0.0;
                 }
 
-                // Row 7: N-dimensional Simplicial conical aperture validation algebra models 
-                // (Work in progress)
-                {
-                    RFarray_local[7][0] = SphericalValidation::EvaluateApertureAlgebraic(X_local);
-                    RFarray_local[7][1] = SphericalValidation::EvaluateApertureUnionAlgebraic(X_local);
-                }
 
                 // Write the results directly into the globally structured vector block using fast stack assignments
                 data[global_idx].first = P;
@@ -312,98 +302,6 @@ std::vector<std::shared_ptr<ImplicitObject>> AppController::MakeDaisyConvexTest(
 }
 
 
-/**
- * @brief Evaluates multi-aperture blending stability profiles across variations of the critical epsilon parameter.
- 
- // Warning : still work in progress
- 
- * @details Specifically designed to run stress-tests regarding local convexity breakdowns on implicit junctions.
- * Maximizes hardware usage by integrating an OpenMP parallel loop distribution and eradicates heavy
- * inner-loop heap allocations by reusing thread-isolated scratchpads.
- * @param sampling Grid discretization step density (Total grid size computed = (sampling + 1)^2).
- * @param eps_min Lower boundary for the linear parameter sweeping array.
- * @param eps_max Upper boundary for the linear parameter sweeping array.
- * @param eps_sample Total number of discrete parameter steps evaluated within the [eps_min, eps_max] band.
- * @return std::vector<std::pair<Eigen::Vector3d, std::vector<Eigen::Vector2d>>> Flattened dataset container
- * pairing spatial positions with their respective parameter-variant stability metrics rows.
- */
- std::vector<std::pair<Eigen::Vector3d, std::vector<Eigen::Vector2d>>>
-     AppController::ComputeFullGridDataConvexTests(unsigned int sampling, double eps_min, double eps_max, int eps_sample)
- {
-     std::cout<<"\t --Convexity domain: [" << eps_min <<","<<eps_max<<"] | "<< eps_sample <<" interpolated values\n";
-
-     //update appcontroller members
-     convex_min = eps_min; convex_max = eps_max;;
-     sample_convex =eps_sample;
-
-     //memory limitation
-     assert(sampling <= 1000);
-
-     const auto& dom = m_scene.m_domain;
-     const size_t total_points = static_cast<size_t>(sampling + 1) * static_cast<size_t>(sampling + 1);
-
-     // Step 1: Pre-allocate the entire contiguous memory block upfront to avoid vector resizing locks
-     std::vector<std::pair<Eigen::Vector3d, std::vector<Eigen::Vector2d>>> data(total_points);
-
-     const size_t num_primitives = m_objects.size();
-
-     // -----------------------------------------------------------------
-     // PARALLELIZED OPENMP EVALUATION ENGINE
-     // -----------------------------------------------------------------
-     // Spawns thread pools to execute spatial row evaluations concurrently. 
-     // Scratchpads are isolated onto individual thread stacks to eliminate synchronization overhead.
-#pragma omp parallel
-     {
-         // Thread-local vector map mapping object potential fields to bypass runtime allocations
-         Eigen::VectorXd X_local(num_primitives);
-
-         // Pre-allocate a thread-isolated vector buffer to hold parameter sweeps without invoking the heap
-         std::vector<Eigen::Vector2d> RFarray_local(eps_sample);
-
-#pragma omp for schedule(guided)
-         for (int j = 0; j <= static_cast<int>(sampling); ++j) {
-             double v_coord = double(j) / sampling;
-             size_t row_offset = static_cast<size_t>(j) * (sampling + 1);
-
-             for (unsigned int i = 0; i <= sampling; ++i) {
-                 double u_coord = double(i) / sampling;
-                 size_t global_idx = row_offset + i;
-
-                 // Map current parametric step coordinates onto explicit 3D space Cartesian configurations
-                 Eigen::Vector3d P = dom.LC + dom.scale * (u_coord * dom.U + v_coord * dom.V);
-
-                 // Populate potentials across all analytical primitives within thread-safe caches
-                 for (size_t k = 0; k < num_primitives; ++k) {
-                     X_local[k] = m_objects[k]->Evaluate(P);
-                 }
-
-                 // --- THIRD INNER NESTED LOOP: PARAMETER SWEEPING ARRAY ---
-                 // Evaluates the continuous aperture variations over linearly varying epsilon targets
-                 for (size_t k = 0; k < static_cast<size_t>(eps_sample); ++k)
-                 {
-                     // Linear interpolation across the target parameter boundaries limits
-                     double eps = k * (eps_max - eps_min) / (eps_sample - 1) + eps_min;
-
-                     double xi, xu;
-
-                     // Call the smooth KS-surrogate formulation (V16) to verify stability behaviors
-                     xi = SphericalValidation::EvaluateApertureAlgebraicV16(X_local, eps, true);
-                     xu = -SphericalValidation::EvaluateApertureAlgebraicV16(-X_local, eps, true);
-
-                     RFarray_local[k][0] = xi;
-                     RFarray_local[k][1] = xu;
-                 }
-
-                 // Transfer results to the globally structured grid block via efficient stack copy semantics
-                 data[global_idx].first = P;
-                 data[global_idx].second = RFarray_local;
-             }
-         }
-     } // End of OpenMP parallel block
-
-     return data;
- }
-
 // =========================================================================
 // INTERACTIVE GRAPHICS ENGINE RENDERING & OPENGL BINDING BUFFERS
 // =========================================================================
@@ -413,13 +311,7 @@ std::vector<std::shared_ptr<ImplicitObject>> AppController::MakeDaisyConvexTest(
      if (currentMode != SceneMode::CADjunction)
      {
          // 1. Core structural field potentials computations passes
-         if (currentMode == SceneMode::NaryConvexityTests)
-         {
-             std::cout << "\t --Grid sampling density: "
-                 << sampling << "x" << sampling << "\n";
-             data = ComputeFullGridDataConvexTests(sampling, -1, 1, RFnumber);
-         }
-
+         
          if (currentMode == SceneMode::NaryExample || currentMode == SceneMode::ClassicalExample)
          {
              std::cout << "\t --Grid sampling density: "
@@ -564,8 +456,6 @@ void AppController::updateActiveListIndex() {
         std::string opName = m_isIntersection ? "INTERSECTION" : "UNION";
 
         if (currentMode == AppController::SceneMode::ClassicalExample             
-            ||
-            currentMode == AppController::SceneMode::NaryConvexityTests
             ||
             currentMode == AppController::SceneMode::NaryExample
             ) {
@@ -1083,6 +973,13 @@ void AppController::BenchmarkGradient(
     csvFile.close();
 }
 
+
+// benchmark for Gradient accuracy and stability for a 9 primitives combination 
+// evaluate various Rfunctions (Ro, Rp, Rm, Chained Rvachev functions, Zenkins, Ternary operator, Normalized ternary operator)
+// Primitive number = 9 is fixed.
+
+// further work : update the code for general number of primitives number = 3^k...
+
 void AppController::BenchmarkGradientUnbalancedTree(
     bool isInter,
     int N,
@@ -1096,7 +993,10 @@ void AppController::BenchmarkGradientUnbalancedTree(
 
     csvFile << "Offset,Function,Mean,StdDev,Error" << std::endl;
 
-    std::vector<std::shared_ptr<ImplicitObject> > daisy = MakeDaisy();
+
+    const int SphereNumbers = 9;
+
+    std::vector<std::shared_ptr<ImplicitObject> > daisy = MakeDaisy(1.0,0.5,SphereNumbers);
     m_objects.clear();
     m_objects = daisy;
 
@@ -1225,6 +1125,9 @@ void AppController::RunNewtonRaphsonBenchmark(int gridRes) {
     const double h = 1e-6;
     const double sutureThreshold = 1e-6; // Bounds non-differentiable switching ridges lines (sutures)
 
+
+
+
     std::string filename = "BenchmarkNewtonConvergence.csv";
     std::ofstream outFile(filename);
 
@@ -1245,6 +1148,10 @@ void AppController::RunNewtonRaphsonBenchmark(int gridRes) {
     else {
         step = Eigen::Vector3d::Zero();
     }
+
+    //initialise 3 Spheres as in paper to run benchmark
+
+    makeSpheres();
 
     auto get_X = [](const Eigen::Vector3d& p) {
         Eigen::VectorXd X(3);
@@ -1298,6 +1205,8 @@ void AppController::RunNewtonRaphsonBenchmark(int gridRes) {
         for (int i = 0; i < gridRes; ++i) {
             for (int j = 0; j < gridRes; ++j) {
                 for (int k = 0; k < gridRes; ++k) {
+
+                    //std::cout << "boucle " << i << " " << j << " " << k << "\n";
                     Eigen::Vector3d p(pMin.x() + i * step.x(),
                         pMin.y() + j * step.y(),
                         pMin.z() + k * step.z());
@@ -1323,12 +1232,14 @@ void AppController::RunNewtonRaphsonBenchmark(int gridRes) {
                             break;
                         }
 
+                        //std::cout << "ok1\n";
                         // Local spatial gradient extraction via central finite differences loops
                         Eigen::Vector3d grad;
                         grad.x() = (method.eval(p + Eigen::Vector3d(h, 0, 0)) - method.eval(p - Eigen::Vector3d(h, 0, 0))) / (2.0 * h);
                         grad.y() = (method.eval(p + Eigen::Vector3d(0, h, 0)) - method.eval(p - Eigen::Vector3d(0, h, 0))) / (2.0 * h);
                         grad.z() = (method.eval(p + Eigen::Vector3d(0, 0, h)) - method.eval(p - Eigen::Vector3d(0, 0, h))) / (2.0 * h);
 
+                        //std::cout << "ok2\n";
                         double g2 = grad.squaredNorm();
                         if (g2 < 1e-14) {
                             gradientDead = true; // Optimization path trapped inside critical flat potential zones
@@ -1488,7 +1399,7 @@ void AppController::SaveResultsToCSV(const std::vector<BenchResult>& results) {
     std::ofstream file("benchmark_final.csv");
 
     if (!file.is_open()) {
-        std::cerr << "[ERROR] Impossible de créer le fichier CSV." << std::endl;
+        std::cerr << "[ERROR] Cannot create the CSV file." << std::endl;
         return;
     }
 
@@ -1966,7 +1877,7 @@ void AppController::RunFeaturePreservingSmooth(double sharpAngleDeg, int iterati
     this->Mesh.faces = std::move(mesh.faces);
 
     std::cout << "\t[KRF - Optimization] Feature-preserving smoothing completed ("
-        << iterations << " iterations, threshold: " << sharpAngleDeg << "°)." << std::endl;
+        << iterations << " iterations, threshold: " << sharpAngleDeg << " deg)." << std::endl;
 }
 
 void AppController::RunUltimateMeshSanitizer(double minAreaThreshold, double minAspectRatio) {

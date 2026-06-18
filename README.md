@@ -41,7 +41,8 @@ This repository explores a geometric alternative based on **ternary R-functions*
 
 ```text
 .
-├── AppController.cpp/.h      # Application state, benchmarks, scene generation, interaction callbacks
+├── AppConfig.cpp/.h         # Interface for simple textual configuration files and scripts 
+├── AppController.cpp/.h     # Application state, benchmarks, scene generation, interaction callbacks
 ├── CAD_Scene.h              # Composite implicit scene and choice of Boolean/R-function logic
 ├── GLScene.cpp/.h           # OpenGL/FreeGLUT rendering and visualization context
 ├── ImplicitObjects.cpp/.h   # Implicit primitives such as spheres, planes, and cylinders
@@ -64,7 +65,6 @@ The project is written in **C++17** and uses CMake. The current build file requi
 - GLU
 - FreeGLUT / GLUT
 - Eigen3
-- Boost
 
 On Ubuntu/Debian, the dependencies can be installed with:
 
@@ -139,7 +139,6 @@ AppController::SceneMode::ClassicalExample
 AppController::SceneMode::BenchmarkGradient
 AppController::SceneMode::BenchmarkGradientUnbalancedTree
 AppController::SceneMode::NaryExample
-AppController::SceneMode::NaryConvexityTests
 AppController::SceneMode::CADjunction
 ```
 

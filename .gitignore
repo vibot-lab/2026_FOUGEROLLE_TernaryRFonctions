@@ -23,7 +23,6 @@
 *.dll
 *.so.*
 
-
 # Fortran module files
 *.mod
 *.smod
@@ -75,3 +74,9 @@ Debug/*
 *.eps
 *.sln
 *.vcxproj*
+
+# ==============================================================================
+# IDE Specific Files
+# ==============================================================================
+# Visual Studio temporary cache, Intellisense database, and precompiled headers
+.vs/

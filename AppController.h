@@ -67,10 +67,10 @@ public:
         BenchmarkGradient,               ///< Benchmarks gradient field accuracy, efficiency, and robustness
         BenchmarkGradientUnbalancedTree, ///< Benchmarks efficiency comparison between different evaluation trees
         NaryExample,                     ///< Meshes, renders, and compares higher-order N-ary R-functions
-        NaryConvexityTests,              ///< Sandbox environment evaluating N-ary R-functions adjustment for convexity tests (controlled by a parameter called epsilon)
         CADjunction                      ///< Executes Marching Cubes and mesh rendering for triple junction results
     };
 
+    
 
     // Data for Rfunction evaluation and rendering
     // heavy structure, but guarantees the sync between all points and their various implicit values
@@ -205,19 +205,7 @@ public:
 
             }
 
-        if (currentMode == AppController::SceneMode::NaryConvexityTests)
-        {
-            // compute the epsilon value associated to the computed function
-            double eps = n * (convex_max - convex_min) / (sample_convex - 1) + convex_min;
- 
-            std::ostringstream oss;
-            oss << "Convexity domain [ " << convex_min << ", " << convex_max
-                << "], value displayed " << eps;
-
-            return oss.str(); // Retourne directement une vraie std::string propre
-        }
-
-
+       
         return std::string("Undefined Mode");
     }
 

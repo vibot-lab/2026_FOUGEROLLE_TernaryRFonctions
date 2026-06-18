@@ -1,0 +1,450 @@
+# ============================================================
+# Ternary R-functions research sandbox configuration
+# ============================================================
+#
+# The application mode is NOT defined in this file.
+# It must be passed as an executable argument:
+#
+#   ./TernaryRFunctions <APPLICATION_MODE> <CONFIG_FILE>
+#
+# Examples:
+#
+#   ./TernaryRFunctions FIELD_RENDER config.yaml
+#   ./TernaryRFunctions CAD_JUNCTION_RENDER config.yaml
+#   ./TernaryRFunctions CAD_JUNCTION_BENCHMARK config.yaml
+#
+# Available application modes:
+#
+#   FIELD_RENDER
+#   CAD_JUNCTION_RENDER
+#   CAD_JUNCTION_BENCHMARK
+#   GRADIENT_BENCHMARK
+#   GRADIENT_UNBALANCED_TREE_BENCHMARK
+#   NEWTON_RAPHSON_BENCHMARK
+#   RFUNCTION_PERFORMANCE_BENCHMARK
+
+
+# ============================================================
+# Common parameters
+# ============================================================
+
+common:
+
+  window:
+    width: 1280
+    height: 720
+
+  rfunctions:
+    rf_number: 8
+
+    # Typical values: 0, 1, 2
+    rvachev_m: 1
+
+    # Possible values:
+    #   MIN_NAIVE
+    #   BINARY_RP
+    #   TERNARY_KRF
+    default_logic: TERNARY_KRF
+
+  # Current code initializes the spherical evaluator with dimension 3.
+  spherical_evaluator:
+    dimension: 3
+
+
+# ============================================================
+# FIELD_RENDER
+# ============================================================
+# Usage:
+#
+#   ./TernaryRFunctions FIELD_RENDER config.yaml
+#
+# Used for interactive visualization of R-function scalar fields.
+# The active method is not configured here. It is selected interactively
+# with keys 0-7, and the usage is printed in the terminal.
+
+field_render:
+
+  # Internal AppController scene mode.
+  #
+  # Possible values:
+  #   ClassicalExample
+  #   NaryExample
+  
+  scene_mode: ClassicalExample
+
+  # Grid resolution for the scalar-field visualization.
+  # Typical values: 100, 150, 200, 500
+  sampling: 200
+
+  # true  = intersection
+  # false = union
+  is_intersection: false
+
+  # false = flat 2D color map
+  # true  = 3D height-field visualization
+  render_as_3d: false
+
+  domain:
+    U: [1.0, 0.0, 0.0]
+    V: [0.0, 1.0, 0.0]
+    LC: [-2.0, -2.0, 0.0]
+    scale: 4.0
+
+  scene:
+
+    # Possible values:
+    #   polygon
+    #   spheres
+    #   daisy
+    
+    type: spheres
+
+    # Used when type: polygon
+    polygon:
+      n_sides: 6
+      radius: 1.25
+
+    # Used when type: spheres
+    spheres:
+      - center: [-0.5, -0.5, 0.0]
+        radius: 1.0
+      - center: [0.5, -0.5, 0.0]
+        radius: 0.8
+      - center: [0.0, 0.5, 0.0]
+        radius: 1.2
+
+    # Used when type: daisy 
+    daisy:
+      primitive_radius: 0.75
+      center_radius: 1.0
+      primitive_count: 7
+
+  
+  gui:
+    enabled: true
+
+
+# ============================================================
+# CAD_JUNCTION_RENDER
+# ============================================================
+# Usage:
+#
+#   ./TernaryRFunctions CAD_JUNCTION_RENDER config.yaml
+#
+# Used for triple-junction surface generation using Marching Cubes,
+# topology cleanup, mesh optimization, and visualization.
+
+cad_junction:
+
+  # Possible values:
+  #   X_JUNCTION
+  #   Y_JUNCTION
+  junction_type: X_JUNCTION
+
+  cylinder_radius: 0.5
+
+  # Possible values:
+  #   union
+  #   intersection
+  logical_operation: union
+
+  # Possible values:
+  #   MIN_NAIVE
+  #   BINARY_RP
+  #   TERNARY_KRF
+  logic: TERNARY_KRF
+
+  marching_cubes:
+    min_bound: [-1.5, -1.5, -1.5]
+    max_bound: [1.5, 1.5, 1.5]
+
+    # Typical values: 50, 70, 80, 100, 120
+    grid_resolution: 80
+
+  thresholds:
+
+    # Initial welding epsilon:
+    #   init_epsilon = dx * init_epsilon_factor_dx
+    #
+    # where:
+    #   dx = (max_bound.x - min_bound.x) / grid_resolution
+    init_epsilon_factor_dx: 0.01
+
+    # Initial area threshold:
+    #   area_threshold = init_epsilon^2 * area_threshold_factor_init_squared
+    area_threshold_factor_init_squared: 5.0
+
+    # Final welding epsilon:
+    #   final_epsilon = init_epsilon * final_epsilon_factor_init
+    final_epsilon_factor_init: 2.0
+
+    # Final area threshold:
+    #   final_area_threshold = final_epsilon^2 * final_area_threshold_factor
+    final_area_threshold_factor: 1.0
+
+    # Sharp-feature angle threshold in degrees.
+    # Typical values: 10, 20, 30, 45
+    sharp_angle_deg: 20.0
+
+  pipeline:
+
+    # Phase 1: isosurface generation and initial cleanup
+    run_marching_cubes: true
+    weld_initial_vertices: true
+    run_topology_cleanup: true
+    build_topology_after_cleanup: true
+
+    # Phase 2: topological optimization
+    run_valence_optimization: true
+    valence_max_passes: 5
+
+    run_parasite_collapse: true
+    build_topology_after_parasite_collapse: true
+
+    # Phase 3: geometric relaxation
+    run_triangle_improvement: true
+    triangle_improvement_iterations: 50
+
+    project_points_to_surface: true
+    build_topology_before_feature_refinement: true
+
+    # Phase 4: sharp-feature refinement
+    refine_sharp_edges: true
+
+    # Phase 5: final mesh polishing
+    run_small_triangle_collapse: true
+    run_unified_cleanup: true
+
+    run_feature_preserving_smooth: true
+    feature_smooth_iterations: 10
+
+    run_ultimate_mesh_sanitizer: true
+
+    # Used as:
+    #   sanitizer_min_area = final_area_threshold * sanitizer_min_area_factor
+    sanitizer_min_area_factor: 2.0
+
+    # Higher values remove more elongated/sliver triangles.
+    # Typical values: 0.03, 0.06, 0.1
+    sanitizer_min_aspect_ratio: 0.06
+
+  render:
+    mesh_buffer_sampling: 100
+    gui_enabled: true
+
+  output:
+    save_mesh: false
+    mesh_file: "output.iv"
+
+
+# ============================================================
+# CAD_JUNCTION_BENCHMARK
+# ============================================================
+# Usage:
+#
+#   ./TernaryRFunctions CAD_JUNCTION_BENCHMARK config.yaml
+#
+# Used to benchmark triple-junction generation over several logic types
+# and grid resolutions.
+
+cad_junction_benchmark:
+
+  junction_type: X_JUNCTION
+  cylinder_radius: 0.5
+
+  # Possible values:
+  #   union
+  #   intersection
+  logical_operation: union
+
+  # Logic types to benchmark.
+  # Possible values:
+  #   MIN_NAIVE
+  #   BINARY_RP
+  #   TERNARY_KRF
+  logics:
+    - MIN_NAIVE
+    - BINARY_RP
+    - TERNARY_KRF
+
+  # Marching Cubes resolutions to test.
+  resolutions: [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150]
+
+  marching_cubes:
+    min_bound: [-1.5, -1.5, -1.5]
+    max_bound: [1.5, 1.5, 1.5]
+
+  thresholds:
+    init_epsilon_factor_dx: 0.01
+    area_threshold_factor_init_squared: 5.0
+    final_epsilon_factor_init: 2.0
+    final_area_threshold_factor: 1.0
+    sharp_angle_deg: 20.0
+
+  pipeline:
+    run_valence_optimization: true
+    valence_max_passes: 5
+    run_parasite_collapse: true
+    run_triangle_improvement: true
+    triangle_improvement_iterations: 50
+    project_points_to_surface: true
+    refine_sharp_edges: true
+    run_small_triangle_collapse: true
+    run_unified_cleanup: true
+    run_feature_preserving_smooth: true
+    feature_smooth_iterations: 10
+    run_ultimate_mesh_sanitizer: true
+    sanitizer_min_area_factor: 2.0
+    sanitizer_min_aspect_ratio: 0.06
+
+  output:
+    csv_file: "benchmark_final.csv"
+
+  gui:
+    enabled_after_benchmark: false
+
+
+# ============================================================
+# GRADIENT_BENCHMARK
+# ============================================================
+# Usage:
+#
+#   ./TernaryRFunctions GRADIENT_BENCHMARK config.yaml
+
+gradient_benchmark:
+
+  # true  = intersection
+  # false = union
+  is_intersection: true
+
+  points_per_circle: 1000
+
+  field_value_start: -0.5
+  field_value_end: 0.5
+
+  number_of_runs: 50
+
+  scene:
+    type: spheres
+    spheres:
+      - center: [-0.5, -0.5, 0.0]
+        radius: 1.0
+      - center: [0.5, -0.5, 0.0]
+        radius: 0.8
+      - center: [0.0, 0.5, 0.0]
+        radius: 1.2
+
+  numerical:
+    finite_difference_h: 1.0e-4
+    boundary_tolerance: 1.0e-3
+
+  output:
+    csv_file: "BenchmarkGradient.csv"
+
+
+# ============================================================
+# GRADIENT_UNBALANCED_TREE_BENCHMARK
+# ============================================================
+# Usage:
+#
+#   ./TernaryRFunctions GRADIENT_UNBALANCED_TREE_BENCHMARK config.yaml
+
+gradient_unbalanced_tree_benchmark:
+
+  # true  = intersection
+  # false = union
+  is_intersection: true
+
+  points_per_circle: 1000
+
+  field_value_start: -0.5
+  field_value_end: 0.5
+
+  number_of_runs: 50
+
+  scene:
+    type: daisy
+    primitive_radius: 1.0
+    center_radius: 0.5
+    primitive_count: 9
+
+  numerical:
+    finite_difference_h: 1.0e-4
+    boundary_tolerance: 1.0e-3
+
+  output:
+    csv_file: "BenchmarkGradientUnbalanced.csv"
+
+
+# ============================================================
+# NEWTON_RAPHSON_BENCHMARK
+# ============================================================
+# Usage:
+#
+#   ./TernaryRFunctions NEWTON_RAPHSON_BENCHMARK config.yaml
+
+newton_raphson_benchmark:
+
+  grid_resolution: 80
+
+  domain:
+    min_bound: [-2.0, -2.0, -2.0]
+    max_bound: [2.0, 2.0, 2.0]
+
+  scene:
+    type: spheres
+    spheres:
+      - center: [-0.5, -0.5, 0.0]
+        radius: 1.0
+      - center: [0.5, -0.5, 0.0]
+        radius: 0.8
+      - center: [0.0, 0.5, 0.0]
+        radius: 1.2
+
+  numerical:
+    epsilon: 1.0e-6
+    max_iterations: 2000
+    finite_difference_h: 1.0e-6
+    suture_threshold: 1.0e-6
+
+  methods:
+    - Rp_BIN_COMB
+    - R0m1_BIN_COMB
+    - RVACHEV_3_ARY_DIRECT
+    - ZENKIN_3_ARY_DIRECT
+    - SPH_DIR_TERNARY
+    - SPH_NORM_TERNARY
+
+  output:
+    csv_file: "BenchmarkNewtonConvergence.csv"
+
+
+# ============================================================
+# RFUNCTION_PERFORMANCE_BENCHMARK
+# ============================================================
+# Usage:
+#
+#   ./TernaryRFunctions RFUNCTION_PERFORMANCE_BENCHMARK config.yaml
+
+rfunction_performance_benchmark:
+
+  # Useful values for recursive ternary tests:
+  #   3, 9, 27
+  dimension: 9
+
+  point_number: 100000
+
+  # true  = intersection
+  # false = union
+  is_intersection: true
+
+  methods:
+    - SPHERICAL_RECURSIVE
+    - RVACHEV_ND_M1
+    - BINARY_RP_CHAIN
+    - BINARY_R0M_CHAIN
+    - ZENKIN_ND
+
+  output:
+    print_to_console: true
+    csv_file: null
