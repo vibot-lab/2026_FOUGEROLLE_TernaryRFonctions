@@ -1,0 +1,37 @@
+﻿{
+    "configurations": [
+        {
+            "name": "x64-Debug",
+            "generator": "Ninja",
+            "configurationType": "Debug",
+            "inheritEnvironments": [ "msvc_x64_x64" ],
+            "buildRoot": "${projectDir}\\out\\build\\${name}",
+            "installRoot": "${projectDir}\\out\\install\\${name}",
+            "cmakeCommandArgs": "",
+            "buildCommandArgs": "",
+            "ctestCommandArgs": "",
+            "variables": [
+                {
+                    "name": "Eigen3_DIR",
+                    "value": "C:/eigen-3.4.0/installed/share/eigen3/cmake",
+                    "type": "PATH"
+                },
+                {
+                    "name": "Boost_INCLUDE_DIR",
+                    "value": "C:/boost_1_88_0/boost_1_88_0",
+                    "type": "PATH"
+                },
+                {
+                    "name": "GLUT_INCLUDE_DIR",
+                    "value": "C:/freeglut-3.8.0/include",
+                    "type": "PATH"
+                },
+                {
+                    "name": "GLUT_glut_LIBRARY",
+                    "value": "C:/freeglut-3.8.0/lib/x64/freeglut.lib",
+                    "type": "FILEPATH"
+                }
+            ]
+        }
+    ]
+}
