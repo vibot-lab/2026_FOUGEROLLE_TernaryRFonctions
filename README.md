@@ -66,6 +66,26 @@ The project is written in **C++17** and uses CMake. The current build file requi
 - FreeGLUT / GLUT
 - Eigen3
 
+## Building from Source (Windows / Visual Studio)
+
+This project uses **vcpkg** to manage its third-party dependencies (`yaml-cpp` and `Eigen3`). Follow these steps to configure the environment and compile the project inside Microsoft Visual Studio.
+
+### 1. Install and Configure vcpkg
+
+Open a standard PowerShell terminal and run the following commands to clone and boostrap vcpkg:
+
+```powershell
+# Clone the official Microsoft vcpkg repository
+git clone [https://github.com/microsoft/vcpkg.git](https://github.com/microsoft/vcpkg.git)
+cd vcpkg
+
+# Bootstrap the package manager to generate the executable
+.\bootstrap-vcpkg.bat
+
+# Optional: Integrate vcpkg with your local user account 
+# (This allows Visual Studio to automatically find vcpkg libraries)
+.\vcpkg integrate install
+
 On Ubuntu/Debian, the dependencies can be installed with:
 
 ```bash
