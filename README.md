@@ -73,13 +73,13 @@ This project uses **vcpkg** to manage its third-party dependencies (`yaml-cpp` a
 #### 1. Install and Configure vcpkg
 Open a standard PowerShell terminal and run the following commands to clone and bootstrap vcpkg:
 
-# Clone the official Microsoft vcpkg repository
+##### Clone the official Microsoft vcpkg repository
 ```
 git clone [https://github.com/microsoft/vcpkg.git](https://github.com/microsoft/vcpkg.git)
 cd vcpkg
 ```
 
-# Bootstrap the package manager to generate the executable
+##### Bootstrap the package manager to generate the executable
 ```
 .\bootstrap-vcpkg.bat
 ```
@@ -90,12 +90,13 @@ Optional: Integrate vcpkg with your local user account
 .\vcpkg integrate install
 ```
 
-# Install Project Dependencies
+##### Install Project Dependencies
 ```
 .\vcpkg install eigen3:x64-windows yaml-cpp:x64-windows
 ```
 
-# Generate the Visual Studio Solution
+##### Generate the Visual Studio Solution
+
 
 Go to your project root and run CMake:
 ```
@@ -103,9 +104,16 @@ mkdir build
 cd build
 cmake .. -DCMAKE_TOOLCHAIN_FILE="C:/path/to/your/vcpkg/scripts/buildsystems/vcpkg.cmake" -A x64
 ```
-## Compilation
 
-From the repository root:
+### Option B: Linux (Ubuntu / Debian)
+#### Install System Dependencies
+Open a terminal and install the required development kits and libraries via apt:
+
+sudo apt update
+sudo apt install build-essential cmake libeigen3-dev libyaml-cpp-dev freeglut3-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev
+
+#### Compilation
+From the repository root directory, execute:
 ```
 mkdir -p build
 cd build
@@ -113,7 +121,8 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . -j$(nproc)
 ```
 
-## Running the demo
+
+#### Running the demo
 
 Run the executable from the build directory:
 
