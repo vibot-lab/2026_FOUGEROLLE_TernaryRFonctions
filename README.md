@@ -93,6 +93,9 @@ cd vcpkg
 # (This allows Visual Studio to automatically find vcpkg libraries)
 .\vcpkg integrate install
 
+# Install Project Dependencies
+.\vcpkg install eigen3:x64-windows yaml-cpp:x64-windows
+
 ## Compilation
 
 From the repository root:
