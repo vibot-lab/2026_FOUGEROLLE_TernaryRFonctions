@@ -553,10 +553,10 @@ int RunRFunctionPerformanceBenchmark(AppController& app, const AppConfig& config
 
 int main(int argc, char** argv) {
     try {
-        /*if (argc < 2) {
+        if (argc < 2) {
             PrintUsage(argv[0]);
             return 1;
-        }*/
+        }
 
         //    << "  FIELD_RENDER\n"
         //    << "  CAD_JUNCTION_RENDER\n"
@@ -566,9 +566,11 @@ int main(int argc, char** argv) {
         //    << "  NEWTON_RAPHSON_BENCHMARK\n"
         //    << "  RFUNCTION_PERFORMANCE_BENCHMARK\n\n"
 
-        // manual parameter settings...
-        const char* argv0 = "FIELD_RENDER";
-        const char* argv1 = "C:\\Development-C++\\2026_CAD_FOUGEROLLE_TernaryRFonctions_code\\config.yaml";
+        // manual parameter settings for testing...
+        //const char* argv0 = "FIELD_RENDER";
+        //const char* argv1 = "C:\\Development-C++\\2026_CAD_FOUGEROLLE_TernaryRFonctions_code\\config.yaml";
+        
+        
         const ApplicationMode mode = AppConfig::ParseApplicationMode(argv0);
 
         const std::string configPath = argv1;
