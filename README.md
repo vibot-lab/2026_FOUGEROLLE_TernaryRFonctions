@@ -82,7 +82,6 @@ This project uses **vcpkg** to manage its third-party dependencies (`yaml-cpp` a
 #### 1. Install and Configure vcpkg
 Open a standard PowerShell terminal and run the following commands to clone and bootstrap vcpkg:
 
-```powershell
 # Clone the official Microsoft vcpkg repository
 git clone [https://github.com/microsoft/vcpkg.git](https://github.com/microsoft/vcpkg.git)
 cd vcpkg
@@ -98,7 +97,6 @@ cd vcpkg
 
 From the repository root:
 
-```bash
 mkdir -p build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
