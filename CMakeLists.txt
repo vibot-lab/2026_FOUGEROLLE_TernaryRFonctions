@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 find_package(OpenGL REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(Boost REQUIRED)
+#find_package(Boost REQUIRED)
 
 # FreeGLUT
 find_package(GLUT REQUIRED)
@@ -62,6 +62,6 @@ target_link_libraries(${PROJECT_NAME}
         OpenGL::GLU
         GLUT::GLUT
         Eigen3::Eigen
-        Boost::boost
+       # Boost::boost
 )
 
