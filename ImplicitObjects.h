@@ -118,7 +118,7 @@ struct VertexResearchData {
 };
 
 /**
- * Cylinder implementation using  R-functions.
+ * Cylinder implementation using R-functions.
  */
 class ImplicitCylinder : public ImplicitObject {
 private:
@@ -142,11 +142,6 @@ public:
         double d_axis = (AP - w * u).norm();
 
         double f_rad = m_radius - d_axis;
-        //  tubes
-        //double f_rad = 0.1 - abs(m_radius - d_axis);
-
-
-
         double f_p1 = w;
         double f_p2 = L - w;
 
@@ -170,26 +165,26 @@ public:
         Eigen::Vector3d AP = P - m_p1;
         double w = AP.dot(u);
 
-        Eigen::Vector3d radialVec = AP - w * u; // Vecteur de l'axe vers P
+        Eigen::Vector3d radialVec = AP - w * u; // Vector from the axis to P
         double d_axis = radialVec.norm();
 
-        // On recalcule les potentiels pour savoir lequel "pilote" la surface à cet endroit
+        // Recompute fields to determine which one drives the surface at this point
         double f_rad = m_radius - d_axis;
         double f_p1 = w;
         double f_p2 = L - w;
 
-        // Logique de sélection basée sur le "Min" (le plus contraignant)
-        // C'est l'approximation C0 du gradient de ta SmoothIntersection.
+        // Selection logic based on the "Min" operator (most restrictive constraint)
+        // This represents the C0 approximation of the SmoothIntersection gradient.
         if (f_rad <= f_p1 && f_rad <= f_p2) {
-            // Zone latérale : le gradient pointe vers l'axe (sens croissant de f_rad)
+            // Lateral zone: the gradient points towards the axis (increasing direction of f_rad)
             return (d_axis > 1e-12) ? (Eigen::Vector3d)(-radialVec / d_axis) : Eigen::Vector3d::Zero();
         }
         else if (f_p1 <= f_p2) {
-            // Bouchon P1 : le potentiel w augmente selon l'axe u
+            // P1 Cap: field w increases along the axis u
             return u;
         }
         else {
-            // Bouchon P2 : le potentiel (L-w) augmente en sens inverse de u
+            // P2 Cap: field (L-w) increases in the opposite direction of u
             return -u;
         }
     }
