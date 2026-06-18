@@ -65,7 +65,6 @@ The project is written in **C++17** and uses CMake. The current build file requi
 - GLU
 - FreeGLUT / GLUT
 - Eigen3
-- Boost
 
 On Ubuntu/Debian, the dependencies can be installed with:
 
