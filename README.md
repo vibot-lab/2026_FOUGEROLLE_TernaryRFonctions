@@ -41,7 +41,8 @@ This repository explores a geometric alternative based on **ternary R-functions*
 
 ```text
 .
-├── AppController.cpp/.h      # Application state, benchmarks, scene generation, interaction callbacks
+├── AppConfig.cpp/.h         # Interface for simple textual configuration files and scripts 
+├── AppController.cpp/.h     # Application state, benchmarks, scene generation, interaction callbacks
 ├── CAD_Scene.h              # Composite implicit scene and choice of Boolean/R-function logic
 ├── GLScene.cpp/.h           # OpenGL/FreeGLUT rendering and visualization context
 ├── ImplicitObjects.cpp/.h   # Implicit primitives such as spheres, planes, and cylinders
