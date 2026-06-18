@@ -97,6 +97,9 @@ cd vcpkg
 .\vcpkg install eigen3:x64-windows yaml-cpp:x64-windows
 
 # Generate the Visual Studio Solution
+
+Go to your project root and run CMake:
+
 mkdir build
 cd build
 cmake .. -DCMAKE_TOOLCHAIN_FILE="C:/path/to/your/vcpkg/scripts/buildsystems/vcpkg.cmake" -A x64
@@ -109,7 +112,7 @@ mkdir -p build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . -j$(nproc)
-```
+
 
 ## Running the demo
 
