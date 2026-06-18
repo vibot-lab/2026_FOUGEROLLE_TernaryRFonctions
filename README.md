@@ -96,6 +96,11 @@ cd vcpkg
 # Install Project Dependencies
 .\vcpkg install eigen3:x64-windows yaml-cpp:x64-windows
 
+# Generate the Visual Studio Solution
+mkdir build
+cd build
+cmake .. -DCMAKE_TOOLCHAIN_FILE="C:/path/to/your/vcpkg/scripts/buildsystems/vcpkg.cmake" -A x64
+
 ## Compilation
 
 From the repository root:
