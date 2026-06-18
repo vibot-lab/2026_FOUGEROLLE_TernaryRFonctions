@@ -1,3 +1,12 @@
+
+/**
+ * @file AppConfig.h
+ * @author Joaquin Rodriguez
+ * @date 2026
+ * @brief Configuration parser implementation using yaml-cpp for the
+ * Generalized R-functions and Ternary implicit modeling framework.
+ */
+
 #ifndef __APP_CONFIG_H__
 #define __APP_CONFIG_H__
 
