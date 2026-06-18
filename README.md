@@ -139,7 +139,6 @@ AppController::SceneMode::ClassicalExample
 AppController::SceneMode::BenchmarkGradient
 AppController::SceneMode::BenchmarkGradientUnbalancedTree
 AppController::SceneMode::NaryExample
-AppController::SceneMode::NaryConvexityTests
 AppController::SceneMode::CADjunction
 ```
 
