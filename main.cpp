@@ -1,6 +1,6 @@
 /**
  * @file main.cpp
- * @author Yohan FOUGEROLLE
+ * @author Yohan FOUGEROLLE - Joaquin Rodriguez
  * @date 2026
  * @brief Main entry for several usages of Rfunctions
  */
