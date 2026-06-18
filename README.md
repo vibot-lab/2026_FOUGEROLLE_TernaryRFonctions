@@ -66,15 +66,6 @@ The project is written in **C++17** and uses CMake. The current build file requi
 - FreeGLUT / GLUT
 - Eigen3
 
-# Constructing Associative Ternary R-functions
-
-Reference implementation for the paper **“Constructing Associative Ternary R-functions: A Geometric Perspective”**.
-The code implements and visualizes ternary and N-ary R-function formulations for implicit modeling, with a focus on spherical-simplex-based ternary composition, scalar-field regularity, gradient stability, and CAD-style triple-junction reconstruction.
-
-## Requirements
-
-The project is written in **C++17** and uses CMake.
-
 ### Option A: Windows (Visual Studio & vcpkg)
 
 This project uses **vcpkg** to manage its third-party dependencies (`yaml-cpp` and `Eigen3`).
