@@ -14,6 +14,9 @@ find_package(OpenGL REQUIRED)
 find_package(Eigen3 REQUIRED)
 #find_package(Boost REQUIRED)
 
+# yaml
+find_package(yaml-cpp REQUIRED)
+
 # FreeGLUT
 find_package(GLUT REQUIRED)
 
@@ -21,6 +24,7 @@ find_package(GLUT REQUIRED)
 # Sources
 # ------------------------------------------------------------------------------
 set(SOURCES
+    AppConfig.cpp
     AppController.cpp
     GLScene.cpp
     ImplicitObjects.cpp
@@ -31,8 +35,8 @@ set(SOURCES
     main.cpp
 )
 
-
 set(HEADERS
+    AppConfig.h
     AppController.h
     CAD_Scene.h
     GLScene.h
@@ -62,6 +66,5 @@ target_link_libraries(${PROJECT_NAME}
         OpenGL::GLU
         GLUT::GLUT
         Eigen3::Eigen
-       # Boost::boost
+        yaml-cpp
 )
-
