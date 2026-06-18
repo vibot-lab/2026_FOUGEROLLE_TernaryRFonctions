@@ -93,8 +93,8 @@ cd vcpkg
 .\bootstrap-vcpkg.bat
 ```
 
-# Optional: Integrate vcpkg with your local user account 
-# (This allows Visual Studio to automatically find vcpkg libraries)
+Optional: Integrate vcpkg with your local user account 
+(This allows Visual Studio to automatically find vcpkg libraries)
 ```
 .\vcpkg integrate install
 ```
