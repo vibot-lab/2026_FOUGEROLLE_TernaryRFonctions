@@ -66,13 +66,21 @@ The project is written in **C++17** and uses CMake. The current build file requi
 - FreeGLUT / GLUT
 - Eigen3
 
-## Building from Source (Windows / Visual Studio)
+# Constructing Associative Ternary R-functions
 
-This project uses **vcpkg** to manage its third-party dependencies (`yaml-cpp` and `Eigen3`). Follow these steps to configure the environment and compile the project inside Microsoft Visual Studio.
+Reference implementation for the paper **“Constructing Associative Ternary R-functions: A Geometric Perspective”**.
+The code implements and visualizes ternary and N-ary R-function formulations for implicit modeling, with a focus on spherical-simplex-based ternary composition, scalar-field regularity, gradient stability, and CAD-style triple-junction reconstruction.
 
-### 1. Install and Configure vcpkg
+## Requirements
 
-Open a standard PowerShell terminal and run the following commands to clone and boostrap vcpkg:
+The project is written in **C++17** and uses CMake.
+
+### Option A: Windows (Visual Studio & vcpkg)
+
+This project uses **vcpkg** to manage its third-party dependencies (`yaml-cpp` and `Eigen3`).
+
+#### 1. Install and Configure vcpkg
+Open a standard PowerShell terminal and run the following commands to clone and bootstrap vcpkg:
 
 ```powershell
 # Clone the official Microsoft vcpkg repository
@@ -85,20 +93,6 @@ cd vcpkg
 # Optional: Integrate vcpkg with your local user account 
 # (This allows Visual Studio to automatically find vcpkg libraries)
 .\vcpkg integrate install
-
-On Ubuntu/Debian, the dependencies can be installed with:
-
-```bash
-sudo apt update
-sudo apt install \
-  build-essential \
-  cmake \
-  libeigen3-dev \
-  freeglut3-dev \
-  libgl1-mesa-dev \
-  libglu1-mesa-dev \
-  mesa-common-dev
-```
 
 ## Compilation
 
