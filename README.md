@@ -68,59 +68,93 @@ The project is written in **C++17** and uses CMake. The current build file requi
 
 ### Option A: Windows (Visual Studio & vcpkg)
 
-This project uses **vcpkg** to manage its third-party dependencies (`yaml-cpp` and `Eigen3`).
+On Windows 10 or Windows 11, the best method is to use `Visual studio` to
+compile and test the code, and `vcpkg` to install the dependencies globally.
+This avoids having to handle independent compilations, paths, and internal
+variables just to compile and test a simple program.
 
-#### 1. Install and Configure vcpkg
-Open a standard PowerShell terminal and run the following commands to clone and bootstrap vcpkg:
+***IMPORTANT:*** Avoid having long paths. Windows longest path is 250 characters.
+If exceeded, weird error will appear. If possible, reduce the repository
+name, and place it on the root C disk.
 
-##### Clone the official Microsoft vcpkg repository
-```
-git clone [https://github.com/microsoft/vcpkg.git](https://github.com/microsoft/vcpkg.git)
-cd vcpkg
-```
+## Installing `vcpkg`
+First of all, install [`git` for Windows](https://git-scm.com/install/windows).
+Then, install [Visual Studio Community for
+Windows](https://visualstudio.microsoft.com/vs/community/), and during
+installation, include the C++ development options.
 
-##### Bootstrap the package manager to generate the executable
-```
+Then, open a PowerShell terminal as administrator and run the following commands
+to install `vcpkg`:
+```bash
+cd C:\
+git clone https://github.com/microsoft/vcpkg.git
+cd C:\vcpkg
 .\bootstrap-vcpkg.bat
 ```
 
-Optional: Integrate vcpkg with your local user account 
-(This allows Visual Studio to automatically find vcpkg libraries)
-```
+Then in the same terminal, configure vcpkg to be integrated into the user Visual Studio environment:
+```bash
+cd C:\vcpkg
 .\vcpkg integrate install
 ```
 
-##### Install Project Dependencies
-```
-.\vcpkg install eigen3:x64-windows yaml-cpp:x64-windows
+## Install dependencies using `vcpkg`
+Now, install the required dependencies, again using PowerShell.
+If you followed the previous steps, `vcpkg` is installed in the root C drive.
+Thus, you should run the following commands:
+```bash
+C:\vcpkg\vcpkg install eigen3:x64-windows freeglut:x64-windows yaml-cpp:x64-windows
 ```
 
-##### Generate the Visual Studio Solution
+## Configuring project in Visual Studio
+As mentioned before, the repository should contain a short name, and the path
+should be as short as possible. For the next steps, we will consider this git
+repository has been downloaded in the folder `C:\TernaryRFunctions`.
 
+Open Visual Studio, select the option `Open a folder`, and choose the repository
+where the code is. Visual Studio will automatically detect that it is a CMake
+project, but no extra configuration for CMake is required since we have installed all the
+required libraries system wide using `vcpkg`.
 
-Go to your project root and run CMake:
-```
-mkdir build
-cd build
-cmake .. -DCMAKE_TOOLCHAIN_FILE="C:/path/to/your/vcpkg/scripts/buildsystems/vcpkg.cmake" -A x64
-```
+To be able to correctly compile the project, we need to configure the
+compilation tools in the `CMakePresets.json` file.
+
+* For the `CMAKE_TOOLCHAIN_FILE`, we are going to choose vcpkg. Therefore we
+  have to change the root path where vcpkg is installed (by default, it is
+  `C:\vcpkg` as explained in this README file).
+
+* Depending on the version of Visual Studio, we need to change the version data
+  of the `generator` variable. For instance, it can be
+  `"generator": "Visual Studio 18 2026"` or
+  `"generator": "Visual Studio 17 2022"`. This information can be obtained in
+  the `Help --> About Microsoft Visual Studio` menu.
+
+Once done, in the top bar, go to the following option :
+***Project -> Delete Cache and Reconfigure***, and confirm the deletion.
+
+If no error appear, you can go to the ***Build -> Build All***.
+
+With the ***launch.vs.json*** file included in this repository, you will enable you
+to execute each independent program from the GUI of Visual Studio.
+Finally, you should be able to see the different demo tasks on the tasks bar
+(top bar close to the Play Green button).
 
 ### Option B: Linux (Ubuntu / Debian)
 #### Install System Dependencies
 Open a terminal and install the required development kits and libraries via apt:
-
+```bash
 sudo apt update
 sudo apt install build-essential cmake libeigen3-dev libyaml-cpp-dev freeglut3-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev
+```
 
 #### Compilation
 From the repository root directory, execute:
 ```
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake --build . -j$(nproc)
 ```
-
 
 #### Running the demo
 
