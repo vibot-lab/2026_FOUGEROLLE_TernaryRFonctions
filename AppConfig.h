@@ -1,3 +1,4 @@
+
 /**
  * @file AppConfig.h
  * @author Joaquin Rodriguez
@@ -5,6 +6,7 @@
  * @brief Configuration parser implementation using yaml-cpp for the
  * Generalized R-functions and Ternary implicit modeling framework.
  */
+
 #ifndef __APP_CONFIG_H__
 #define __APP_CONFIG_H__
 
@@ -107,6 +109,8 @@ public:
         DaisyConfig daisy;
     };
 
+   
+
     struct FieldRenderConfig {
         AppController::SceneMode sceneMode = AppController::SceneMode::NaryExample;
         int sampling = 500;
@@ -116,6 +120,7 @@ public:
         FieldSceneConfig scene;
         bool guiEnabled = true;
     };
+
 
     // Marching cube requires a volume and resolution
     struct MarchingCubesConfig {
@@ -132,6 +137,7 @@ public:
         double finalAreaThresholdFactor = 1.0;
         double sharpAngleDeg = 20.0;
     };
+
 
     //this can be adjusted to test and evaluate all steps
     struct CADPipelineConfig {
@@ -191,6 +197,7 @@ public:
         CADOutputConfig output;
     };
 
+
     // set up the config for the union of 3 cylinders
     // and all the parameters to analyse results
     struct CADJunctionBenchmarkConfig {
@@ -218,6 +225,7 @@ public:
         bool guiEnabledAfterBenchmark = false;
     };
 
+
     // Configuration for Gradient analysis (domain, accuracy, point density, etc)
     struct GradientBenchmarkConfig {
         bool isIntersection = true;
@@ -234,6 +242,7 @@ public:
     };
 
     //configuration for N-ary unbalanced Rfunction evaluation
+
     struct GradientUnbalancedTreeBenchmarkConfig {
         bool isIntersection = true;
         int pointsPerCircle = 1000;
@@ -286,9 +295,12 @@ public:
     // The config file path is mandatory.
     explicit AppConfig(const std::string& configPath);
 
+
     // Application mode parser.
+    
     static  ApplicationMode ParseApplicationMode(const std::string& modeStr);
     static std::string ToString(ApplicationMode mode);
+    
 
     // Search utility.
     static std::filesystem::path FindConfigFile(
@@ -325,4 +337,3 @@ private:
 };
 
 #endif // __APP_CONFIG_H__
-

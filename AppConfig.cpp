@@ -96,6 +96,8 @@ bool ParseLogicalOperation(const std::string& value)
     );
 }
 
+
+
 AppController::SceneMode ParseSceneMode(const std::string& value)
 {
     if (value == "ClassicalExample") {
@@ -135,6 +137,7 @@ AppConfig::FieldSceneType ParseFieldSceneType(const std::string& value)
         return AppConfig::FieldSceneType::DAISY;
     }
 
+    
     throw std::runtime_error("Unknown field scene type: " + value);
 }
 
@@ -426,6 +429,8 @@ AppConfig::AppConfig(const std::string& configPath)
     loadFromFile(configPath);
 }
 
+
+
 // ============================================================
 // Private loading function
 // ============================================================
@@ -545,6 +550,7 @@ void AppConfig::loadFromFile(const std::string& configPath)
             m_fieldRender.scene = ReadFieldScene(fieldRender["scene"]);
         }
 
+        
         if (Has(fieldRender, "gui")) {
             m_fieldRender.guiEnabled =
                 ReadOr<bool>(
