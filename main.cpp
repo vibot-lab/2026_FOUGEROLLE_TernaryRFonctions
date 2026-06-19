@@ -558,22 +558,9 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        //    << "  FIELD_RENDER\n"
-        //    << "  CAD_JUNCTION_RENDER\n"
-        //    << "  CAD_JUNCTION_BENCHMARK\n"
-        //    << "  GRADIENT_BENCHMARK\n"
-        //    << "  GRADIENT_UNBALANCED_TREE_BENCHMARK\n"
-        //    << "  NEWTON_RAPHSON_BENCHMARK\n"
-        //    << "  RFUNCTION_PERFORMANCE_BENCHMARK\n\n"
+        const ApplicationMode mode = AppConfig::ParseApplicationMode(argv[1]);
 
-        // manual parameter settings for testing...
-        //const char* argv0 = "FIELD_RENDER";
-        //const char* argv1 = "C:\\Development-C++\\2026_CAD_FOUGEROLLE_TernaryRFonctions_code\\config.yaml";
-        
-        
-        const ApplicationMode mode = AppConfig::ParseApplicationMode(argv0);
-
-        const std::string configPath = argv1;
+        const std::string configPath = argv[2];
 
         AppConfig config(configPath);
 
@@ -586,7 +573,7 @@ int main(int argc, char** argv) {
 
         switch (mode) {
             case ApplicationMode::FIELD_RENDER:
-            {                
+            {
                 return RunFieldRender(app, config, argc, argv);
             }
 
