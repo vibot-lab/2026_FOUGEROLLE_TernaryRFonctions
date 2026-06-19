@@ -1,0 +1,60 @@
+﻿{
+    "configurations": [
+        {
+            "name": "x64-Debug",
+            "generator": "Ninja",
+            "configurationType": "Debug",
+            "inheritEnvironments": [ "msvc_x64_x64" ],
+            "buildRoot": "${projectDir}\\out\\build\\${name}",
+            "installRoot": "${projectDir}\\out\\install\\${name}",
+            "cmakeCommandArgs": "",
+            "buildCommandArgs": "",
+            "ctestCommandArgs": "",
+            "variables": [
+                {
+                    "name": "Eigen3_DIR",
+                    "value": "C:/eigen-3.4.0/installed/share/eigen3/cmake",
+                    "type": "PATH"
+                },
+                {
+                    "name": "GLUT_INCLUDE_DIR",
+                    "value": "C:/freeglut-3.8.0/freeglut-3.8.0/include",
+                    "type": "PATH"
+                },
+                {
+                    "name": "GLUT_glut_LIBRARY",
+                    "value": "C:/freeglut-3.8.0/freeglut-3.8.0/lib/x64/freeglut.lib",
+                    "type": "FILEPATH"
+                }
+            ]
+        },
+        {
+            "name": "x64-Release",
+            "generator": "Ninja",
+            "configurationType": "RelWithDebInfo",
+            "buildRoot": "${projectDir}\\out\\build\\${name}",
+            "installRoot": "${projectDir}\\out\\install\\${name}",
+            "cmakeCommandArgs": "",
+            "buildCommandArgs": "",
+            "ctestCommandArgs": "",
+            "inheritEnvironments": [ "msvc_x64_x64" ],
+            "variables": [
+                {
+                    "name": "Eigen3_DIR",
+                    "value": "C:/eigen-3.4.0/installed/share/eigen3/cmake",
+                    "type": "PATH"
+                },
+                {
+                    "name": "GLUT_INCLUDE_DIR",
+                    "value": "C:/freeglut-3.8.0/freeglut-3.8.0/include",
+                    "type": "PATH"
+                },
+                {
+                    "name": "GLUT_glut_LIBRARY",
+                    "value": "C:/freeglut-3.8.0/freeglut-3.8.0/lib/x64/freeglut.lib",
+                    "type": "FILEPATH"
+                }
+            ]
+        }
+    ]
+}

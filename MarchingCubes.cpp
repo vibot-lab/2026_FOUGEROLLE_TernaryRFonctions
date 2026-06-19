@@ -302,11 +302,11 @@ const int triTable[256][16] =
 
 
 size_t MarchingCubes::GetExistingMidpoint(size_t v1, size_t v2, const std::map<std::pair<size_t, size_t>, size_t>& splitEdges) const {
-    // On travaille sur une copie locale pour ne pas modifier les paramètres d'entrée
+    // Work on a local copy to avoid modifying input parameters
     size_t a = v1;
     size_t b = v2;
 
-    // On s'assure que la clé est toujours (petit, grand) pour correspondre à la map
+    // Ensure the key is always (min, max) to match the map configuration
     if (a > b) {
         std::swap(a, b);
     }
@@ -321,21 +321,21 @@ size_t MarchingCubes::GetExistingMidpoint(size_t v1, size_t v2, const std::map<s
 Eigen::Vector3d MarchingCubes::ProjectToSurface(const ImplicitObject& obj, const Eigen::Vector3d& P) {
     Eigen::Vector3d projectedP = P;
 
-    // On fait 2 ou 3 itérations pour une précision chirurgicale
-    // (Une seule suffit souvent si on part d'un point proche du MC)
+    // Perform 2 or 3 iterations for high precision engineering
+    // (A single iteration is often sufficient if starting close to the MC vertex)
     for (int i = 0; i < 2; ++i) {
         double val = obj.Evaluate(projectedP);
 
-        // Si on est déjà sur la surface (seuil de tolérance)
+        // Terminate if already on the zero-level set (tolerance threshold)
         if (std::abs(val) < 1e-8) break;
 
         Eigen::Vector3d grad = obj.Gradient(projectedP);
         double g2 = grad.squaredNorm();
 
-        // Sécurité contre les zones de gradient nul (singularités)
+        // Safety check against zero-gradient regions (singularities)
         if (g2 < 1e-8) break;
 
-        // Formule de Newton : P = P - f(P) * grad / ||grad||^2
+        // Newton-Raphson formula: P = P - f(P) * grad / ||grad||^2
         projectedP -= (val / g2) * grad;
     }
 
@@ -481,24 +481,24 @@ void MarchingCubes::DichotomyRefine(const ImplicitObject& obj,
     std::vector<Eigen::Vector3d>& vertices,
     int maxIter)
 {
-    // On travaille sur des copies locales pour la dichotomie
+    // Work on local copies for the dichotomy process
     Eigen::Vector3d P1 = vertices[v1Idx];
     Eigen::Vector3d P2 = vertices[v2Idx];
 
-    // Le point à ajuster est celui qu'on a inséré au milieu
+    // The vertex to adjust is the one inserted at the midpoint
     Eigen::Vector3d& M = vertices[midIdx];
 
     for (int i = 0; i < maxIter; ++i) {
-        // 1. Snapping du milieu actuel sur la surface f(P)=0
+        // 1. Snap the current midpoint onto the implicit surface f(P)=0
         M = ProjectToSurface(obj, (P1 + P2) * 0.5);
 
-        // 2. Récupération des normales (gradients)
+        // 2. Retrieve surface normals (gradients)
         Eigen::Vector3d n1 = obj.Gradient(P1).normalized();
         Eigen::Vector3d n2 = obj.Gradient(P2).normalized();
         Eigen::Vector3d nM = obj.Gradient(M).normalized();
 
-        // 3. Capture de normale : 
-        // On remplace l'extrémité qui a la normale la plus proche du milieu
+        // 3. Normal capture strategy: 
+        // Replace the endpoint whose normal exhibits higher colinearity with the midpoint normal
         if (nM.dot(n1) > nM.dot(n2)) {
             P1 = M;
         }
@@ -506,11 +506,11 @@ void MarchingCubes::DichotomyRefine(const ImplicitObject& obj,
             P2 = M;
         }
 
-        // 4. Critère d'arrêt : si les points sont quasi-confondus
+        // 4. Convergence criterion: stop if endpoints are quasi-coincident
         if ((P1 - P2).squaredNorm() < 1e-12) break;
     }
 
-    // À la fin, M est "coincé" sur l'arête vive entre P1 et P2
+    // Upon completion, M is strictly constrained to the sharp feature between P1 and P2
 }
 
 
@@ -522,14 +522,14 @@ void MarchingCubes::RefineTopology(NeighborMesh& mesh,
     history.clear();
     std::map<std::pair<size_t, size_t>, size_t> localSplitMap;
 
-    // --- ÉTAPE 1 : On marque les arêtes initiales ---
+    // --- STEP 1: Mark initial edges ---
     for (const auto& edgeKey : edgesToSplit) {
         CreateMidpoint(mesh, edgeKey.first, edgeKey.second, localSplitMap, history);
     }
 
-    // --- ÉTAPE 2 : LA CLÉ DU SCELLEMENT ---
-    // On parcourt les faces pour voir lesquelles vont forcer un "Red Split"
-    // et on crée ces points AVANT la reconstruction pour que les voisins les voient.
+    // --- STEP 2: TOPOLOGICAL RECONCILIATION ---
+    // Iterate over faces to detect configurations forcing a "Red Split"
+    // Create these vertices BEFORE reconstruction to ensure structural consistency across neighbors
     bool added;
     do {
         added = false;
@@ -542,8 +542,8 @@ void MarchingCubes::RefineTopology(NeighborMesh& mesh,
                 if (m[i]) count++;
             }
 
-            // Si on a 2 arêtes coupées, on force la 3ème (Red Split)
-            // Cela propage le point au voisin qui passera alors de Green Split à Red Split, etc.
+            // If 2 edges are split, force the subdivision of the 3rd edge (Red Split)
+            // This propagates the subdivision to neighboring cells, upgrading Green Splits to Red Splits
             if (count == 2) {
                 for (int i = 0; i < 3; ++i) {
                     if (!GetExistingMidpoint(v[i], v[(i + 1) % 3], localSplitMap)) {
@@ -553,9 +553,9 @@ void MarchingCubes::RefineTopology(NeighborMesh& mesh,
                 }
             }
         }
-    } while (added); // On boucle jusqu'à stabilisation de la topologie
+    } while (added); // Loop until the mesh topology stabilizes
 
-    // --- ÉTAPE 3 : Reconstruction (maintenant localSplitMap est exhaustive) ---
+    // --- STEP 3: Reconstruction (localSplitMap is now exhaustive) ---
     std::vector<Eigen::Vector3i> nextFaces;
     nextFaces.reserve(mesh.faces.size() * 2);
 
@@ -571,7 +571,7 @@ void MarchingCubes::RefineTopology(NeighborMesh& mesh,
             nextFaces.push_back(face);
         }
         else if (splitCount == 1) {
-            // Green Split (maintenant garanti sans T-junction chez le voisin)
+            // Green Split (now guaranteed without creating T-junctions in adjacent faces)
             if (m01) {
                 nextFaces.push_back({ (int)v0, (int)m01, (int)v2 });
                 nextFaces.push_back({ (int)m01, (int)v1, (int)v2 });
@@ -586,7 +586,7 @@ void MarchingCubes::RefineTopology(NeighborMesh& mesh,
             }
         }
         else if (splitCount == 3) {
-            // Red Split propre
+            // Uniform Red Split
             nextFaces.push_back({ (int)v0, (int)m01, (int)m20 });
             nextFaces.push_back({ (int)v1, (int)m12, (int)m01 });
             nextFaces.push_back({ (int)v2, (int)m20, (int)m12 });
@@ -599,12 +599,12 @@ void MarchingCubes::RefineTopology(NeighborMesh& mesh,
 Eigen::Vector3d MarchingCubes::Interpolate(const Eigen::Vector3d& p1, const Eigen::Vector3d& p2, double v1, double v2) {
     const double eps = 1e-10;
 
-    // Si la différence est nulle, on évite le NaN et on renvoie le milieu
+    // Prevent NaN if potential difference is zero; return the midpoint
     if (std::abs(v1 - v2) < eps) {
         return (p1 + p2) * 0.5;
     }
 
-    // Si l'un des sommets est déjà sur l'isovaleur, on le renvoie directement
+    // If a vertex lies exactly on the field boundary, return its position directly
     if (std::abs(v1 - m_isoValue) < eps) return p1;
     if (std::abs(v2 - m_isoValue) < eps) return p2;
 
@@ -634,14 +634,14 @@ MarchingCubes::Generate(const ImplicitObject& obj, const Eigen::Vector3d& minBou
                 VoxelCell cell;
                 for (int i = 0; i < 8; i++) {
                     cell.p[i] = minBound + Eigen::Vector3d(
-                        (x + ((i ^ (i >> 1)) & 1)) * dx, // Ordre standard MC
+                        (x + ((i ^ (i >> 1)) & 1)) * dx, // Standard MC indexing order
                         (y + ((i >> 1) & 1)) * dy,
                         (z + ((i >> 2) & 1)) * dz
                     );
                     cell.val[i] = obj.Evaluate(cell.p[i]);
                 }
 
-                // 2. CORRECTION LOGIQUE : Intérieur si f(P) > m_isoValue
+                // 2. LOGICAL CORRECTION: Interior defined where f(P) > m_isoValue
                 int cubeIndex = 0;
                 if (cell.val[0] > m_isoValue) cubeIndex |= 1;
                 if (cell.val[1] > m_isoValue) cubeIndex |= 2;
@@ -655,7 +655,7 @@ MarchingCubes::Generate(const ImplicitObject& obj, const Eigen::Vector3d& minBou
                 // 3. TRIANGULATION
                 if (edgeTable[cubeIndex] == 0) continue;
 
-                // Calcul des sommets sur les 12 arêtes par interpolation
+                // Compute vertices along the 12 edges using linear interpolation
                 Eigen::Vector3d vertList[12];
                 if (edgeTable[cubeIndex] & 1) vertList[0] = Interpolate(cell.p[0], cell.p[1], cell.val[0], cell.val[1]);
                 if (edgeTable[cubeIndex] & 2) vertList[1] = Interpolate(cell.p[1], cell.p[2], cell.val[1], cell.val[2]);
@@ -670,7 +670,7 @@ MarchingCubes::Generate(const ImplicitObject& obj, const Eigen::Vector3d& minBou
                 if (edgeTable[cubeIndex] & 1024) vertList[10] = Interpolate(cell.p[2], cell.p[6], cell.val[2], cell.val[6]);
                 if (edgeTable[cubeIndex] & 2048) vertList[11] = Interpolate(cell.p[3], cell.p[7], cell.val[3], cell.val[7]);
 
-                // Création des triangles
+                // Construct triangles
                 for (int i = 0; triTable[cubeIndex][i] != -1; i += 3) {
                     int vIdx = (int)vertices.size();
                     vertices.push_back(vertList[triTable[cubeIndex][i]]);
@@ -693,17 +693,17 @@ size_t MarchingCubes::CreateMidpoint(NeighborMesh& mesh,
 {
     if (v1 > v2) std::swap(v1, v2);
 
-    // Si l'arête a déjà été traitée (par une face voisine), on renvoie juste l'index
+    // If the edge has already been processed by an adjacent face, return the existing index
     if (splitEdges.count({ v1, v2 })) return splitEdges[{v1, v2}];
 
-    // Sinon, on crée le point
+    // Otherwise, generate the new vertex
     size_t newIdx = mesh.vertices.size();
     mesh.vertices.push_back((mesh.vertices[v1] + mesh.vertices[v2]) * 0.5);
 
-    // On enregistre dans la map pour les faces voisines
+    // Register in the map for adjacent face tracking
     splitEdges[{v1, v2}] = newIdx;
 
-    // ON ENREGISTRE DANS L'HISTORIQUE POUR LA DICHTOMIE
+    // STORE IN HISTORY FOR SUBSEQUENT DICHOTOMIC OPTIMIZATION
     history.push_back({ newIdx, v1, v2 });
 
     return newIdx;
@@ -715,16 +715,16 @@ void MarchingCubes::RefineSharpEdges(const ImplicitObject& obj,
     double angleThresholdDeg)
 {
     // -------------------------------------------------------------------
-    // PHASE 1 : IDENTIFICATION ET SPLIT TOPOLOGIQUE
+    // PHASE 1: IDENTIFICATION AND TOPOLOGICAL SPLIT
     // -------------------------------------------------------------------
     mesh.Build_Edges();
 
     std::cout << "\n--- [DEBUG] Sharp Edge Refinement ---" << std::endl;
 
-    // 1. DÉTECTION PAR LINÉARITÉ IMPLICITE ET SAUT DE GRADIENT
+    // 1. DETECTION VIA IMPLICIT NON-LINEARITY AND GRADIENT JUMP
     std::vector<std::pair<size_t, size_t>> edgesToSplit;
     double fieldThreshold = 0.05;
-    double cosThreshold = std::cos(10.0 * M_PI / 180.0); // Seuil de 5 degrés
+    double cosThreshold = std::cos(10.0 * M_PI / 180.0); // 5-degree tolerance threshold
 
     for (auto const& [edgeKey, faceIndices] : mesh.Edges) {
         if (faceIndices.size() == 2) {
@@ -748,15 +748,15 @@ void MarchingCubes::RefineSharpEdges(const ImplicitObject& obj,
         return;
     }
 
-    // 2. Application du split topologique
+    // 2. Apply topological splitting
     std::vector<SplitInfo> history;
     RefineTopology(mesh, edgesToSplit, history);
 
-    // 3. PINCEMENT, PROJECTION ET RELAXATION
+    // 3. PINCHING, PROJECTING AND RELAXATION
     if (!history.empty()) {
-        std::cout << "[INFO] Pincing and projecting " << history.size() << " points..." << std::endl;
+        std::cout << "[INFO] Pinching and projecting " << history.size() << " points..." << std::endl;
 
-        // A. Pincement initial et projection (Newton-Raphson)
+        // A. Initial pinching and projection (Newton-Raphson method)
 #pragma omp parallel for
         for (int i = 0; i < (int)history.size(); ++i) {
             const auto& info = history[i];
@@ -773,13 +773,13 @@ void MarchingCubes::RefineSharpEdges(const ImplicitObject& obj,
             { mesh.vertices[info.midIdx] = P; }
         }
 
-        // 3b. RELAXATION PAR ARC OSCULATEUR (Anti-Grignotage)
+        // 3b. RELAXATION VIA OSCULATING ARC (Anti-Erosion)
         for (const auto& info : history) {
             Eigen::Vector3d P0 = mesh.vertices[info.v1Idx];
             Eigen::Vector3d P1 = mesh.vertices[info.midIdx];
             Eigen::Vector3d P2 = mesh.vertices[info.v2Idx];
 
-            // 1. Calcul de la courbure locale via le rayon du cercle circonscrit
+            // 1. Evaluate local curvature via circumscribed circle radius
             Eigen::Vector3d v01 = P1 - P0;
             Eigen::Vector3d v12 = P2 - P1;
             Eigen::Vector3d v02 = P2 - P0;
@@ -787,23 +787,23 @@ void MarchingCubes::RefineSharpEdges(const ImplicitObject& obj,
             double area = 0.5 * (v01.cross(v02)).norm();
             double R = (v01.norm() * v12.norm() * v02.norm()) / (4.0 * area + 1e-12);
 
-            // Si R est très grand, la courbe est quasi-droite -> interpolation linéaire
-            // Si R est petit, on est sur une zone à forte courbure -> on suit l'arc
+            // Large radius R implies a quasi-linear profile -> use linear interpolation
+            // Small radius R implies high local curvature -> follow the geometric arc
             if (R > 1e6) {
                 Eigen::Vector3d target = (P0 + P2) * 0.5;
                 P1 += (target - P1) * 0.5;
             }
             else {
-                // Projection sur l'arc : on déplace P1 vers l'arc de cercle
-                // Cela empêche l'érosion car on suit la géométrie au lieu de couper par la corde
+                // Project onto the geometric arc: displace P1 towards the circular arc
+                // This prevents feature erosion by tracking the true geometry instead of cutting through the chord
                 Eigen::Vector3d midChord = (P0 + P2) * 0.5;
                 Eigen::Vector3d normal = (P1 - midChord).normalized();
 
-                // P1 est ajusté pour être à une distance R de l'arc
+                // Adjust P1 to be situated precisely at distance R along the arc profile
                 P1 = midChord + normal * (R - std::sqrt(std::max(0.0, R * R - v02.squaredNorm() / 4.0)));
             }
 
-            // 2. PROJECTION FORTE (Newton-Raphson) - TOUJOURS
+            // 2. ENFORCE STRONG PROJECTION (Newton-Raphson) - ALWAYS
             for (int iter = 0; iter < 5; ++iter) {
                 double val = obj.Evaluate(P1);
                 Eigen::Vector3d grad = obj.Gradient(P1);
@@ -814,7 +814,7 @@ void MarchingCubes::RefineSharpEdges(const ImplicitObject& obj,
         }
     }
 
-    // 4. SYNCHRONISATION STRUCTURELLE
+    // 4. STRUCTURAL SYNCHRONIZATION
     mesh.Build_P2P_Neigh();
     mesh.Build_P2F_Neigh();
     mesh.Build_F2F_Neigh();
@@ -863,6 +863,7 @@ MarchingCubes::UnifiedClean(const std::vector<Eigen::Vector3d>& vertices,
         if (nf[0] == nf[1] || nf[1] == nf[2] || nf[2] == nf[0]) continue;
 
         // geometric check
+        // Verify normal orientation layout after indexing adjustments
         Eigen::Vector3d oldN = (vertices[f[1]] - vertices[f[0]]).cross(vertices[f[2]] - vertices[f[0]]);
         Eigen::Vector3d newN = (cleanedVertices[nf[1]] - cleanedVertices[nf[0]]).cross(cleanedVertices[nf[2]] - cleanedVertices[nf[0]]);
         if (oldN.dot(newN) < 0) std::swap(nf[1], nf[2]);
@@ -871,4 +872,3 @@ MarchingCubes::UnifiedClean(const std::vector<Eigen::Vector3d>& vertices,
     }
     return { cleanedVertices, cleanedFaces };
 }
-

@@ -24,12 +24,11 @@
 #ifndef _MESH_
 #define _MESH_
 
- // 1. Forward Declarations (évite d'inclure tout le monde ici)
+ // 1. Forward Declarations required for MC mesh constructions
 namespace RCore {
-	class SphericalEvaluator; // <--- Plus besoin d'inclure Rfunctions.h si c'est un pointeur
+	class SphericalEvaluator; 
 }
-class ImplicitCylinder; // <--- Plus besoin d'inclure ImplicitObjects.h ici
-
+class ImplicitCylinder; 
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -125,15 +124,9 @@ class Mesh
 	public:
 
 		RCore::SphericalEvaluator* TernarySphericalOperator;
-		void PurgeInternalFaces(double epsilon_surf = 1e-3);
-
-		std::vector<VertexResearchData> vertex_results;
 		
-
-        unsigned int getFurthestPoint(unsigned int);
-        unsigned int getFurthestPoint(unsigned int, unsigned int);
-        unsigned int getFurthestPoint(unsigned int, unsigned int,  unsigned int);
-
+		std::vector<VertexResearchData> vertex_results;
+       
         //display vertex and face numbers in the OpenGL window
 		void Print_Stats();
 
@@ -623,20 +616,10 @@ class Mesh
 		}
 
 		//clean
-		void GetGeometricStatistics()const ;
+		void GetGeometricStatistics() const ;
 		void ClearAll();
 
-		// convex hull related messy functions -- work and bugs in progress
-
-        unsigned int computeBoundingSphere(Eigen::Vector3d &center, double &radius) const;
-
-        unsigned int findClosestPointToPlane(unsigned int i0, const Eigen::Vector3d &N) const;
-
-        unsigned int findThirdPointMinimalRotation(unsigned int i0, unsigned int i1, const Eigen::Vector3d &N) const;
-
-        unsigned int correctThirdPoint(unsigned int i0, unsigned int i1, unsigned int i2);
-
-        };
+};
 
 #endif // _MESH_
 

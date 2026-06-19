@@ -66,19 +66,7 @@ void NeighborMesh :: DrawP2P_Neigh( size_t i ) const
     glDisable(GL_LIGHTING);
 
     //render the considered point in red
-    Vector3d P(vertices[i]);
-
-    //Write the number of neighbours in the OGL window
-    /*
-    glColor3f(1,0,0);
-    glPushMatrix();
-    glTranslatef(P[0], P[1], P[2]);
-    char s[255];
-    sprintf_s(s, "%d", P2P_Neigh[i].size());
-    string n(s);
-    Print3DMessage(0,0,n);
-    glPopMatrix();
-    */
+    Vector3d P(vertices[i]); 
 
     glBegin(GL_POINTS);
     glColor3f(1,0,0);
@@ -221,20 +209,17 @@ set<size_t> NeighborMesh :: GetP2P_Neigh( size_t p_index, size_t n) const
                         previous.begin(), previous.end(),
                         insert_iterator< set<size_t> >(dum, dum.begin())
                         );
-        //myset = dum; // copy dum result into myset... I whish I could have avoided this
 
         //previous = myset INTERSECTED with new ring
         previous.clear();
-        set_intersection( //myset.begin(), myset.end(),
-                          dum.begin(), dum.end(),
+        set_intersection( dum.begin(), dum.end(),
                           new_ring.begin(), new_ring.end(),
                           insert_iterator< set<size_t> >(previous, previous.begin())
                           );
 
         //new_ring = myset MINUS previous
         new_ring.clear();
-        set_difference( //myset.begin(), myset.end(),
-                        dum.begin(), dum.end(),
+        set_difference( dum.begin(), dum.end(),
                         previous.begin(), previous.end(),
                         insert_iterator< set<size_t> >(new_ring, new_ring.begin())
                         );

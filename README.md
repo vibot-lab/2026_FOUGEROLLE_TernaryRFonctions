@@ -41,7 +41,8 @@ This repository explores a geometric alternative based on **ternary R-functions*
 
 ```text
 .
-├── AppController.cpp/.h      # Application state, benchmarks, scene generation, interaction callbacks
+├── AppConfig.cpp/.h         # Interface for simple textual configuration files and scripts 
+├── AppController.cpp/.h     # Application state, benchmarks, scene generation, interaction callbacks
 ├── CAD_Scene.h              # Composite implicit scene and choice of Boolean/R-function logic
 ├── GLScene.cpp/.h           # OpenGL/FreeGLUT rendering and visualization context
 ├── ImplicitObjects.cpp/.h   # Implicit primitives such as spheres, planes, and cylinders
@@ -64,39 +65,68 @@ The project is written in **C++17** and uses CMake. The current build file requi
 - GLU
 - FreeGLUT / GLUT
 - Eigen3
-- Boost
 
-On Ubuntu/Debian, the dependencies can be installed with:
+### Option A: Windows (Visual Studio & vcpkg)
 
-```bash
-sudo apt update
-sudo apt install \
-  build-essential \
-  cmake \
-  libeigen3-dev \
-  libboost-all-dev \
-  freeglut3-dev \
-  libgl1-mesa-dev \
-  libglu1-mesa-dev \
-  mesa-common-dev
+This project uses **vcpkg** to manage its third-party dependencies (`yaml-cpp` and `Eigen3`).
+
+#### 1. Install and Configure vcpkg
+Open a standard PowerShell terminal and run the following commands to clone and bootstrap vcpkg:
+
+##### Clone the official Microsoft vcpkg repository
+```
+git clone [https://github.com/microsoft/vcpkg.git](https://github.com/microsoft/vcpkg.git)
+cd vcpkg
 ```
 
-## Compilation
+##### Bootstrap the package manager to generate the executable
+```
+.\bootstrap-vcpkg.bat
+```
 
-From the repository root:
+Optional: Integrate vcpkg with your local user account 
+(This allows Visual Studio to automatically find vcpkg libraries)
+```
+.\vcpkg integrate install
+```
 
-```bash
+##### Install Project Dependencies
+```
+.\vcpkg install eigen3:x64-windows yaml-cpp:x64-windows
+```
+
+##### Generate the Visual Studio Solution
+
+
+Go to your project root and run CMake:
+```
+mkdir build
+cd build
+cmake .. -DCMAKE_TOOLCHAIN_FILE="C:/path/to/your/vcpkg/scripts/buildsystems/vcpkg.cmake" -A x64
+```
+
+### Option B: Linux (Ubuntu / Debian)
+#### Install System Dependencies
+Open a terminal and install the required development kits and libraries via apt:
+
+sudo apt update
+sudo apt install build-essential cmake libeigen3-dev libyaml-cpp-dev freeglut3-dev libgl1-mesa-dev libglu1-mesa-dev mesa-common-dev
+
+#### Compilation
+From the repository root directory, execute:
+```
 mkdir -p build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . -j$(nproc)
 ```
 
-## Running the demo
+
+#### Running the demo
 
 Run the executable from the build directory:
 
-```bash
+```
 cd build && ./TernaryRFunctions
 ```
 
@@ -139,7 +169,6 @@ AppController::SceneMode::ClassicalExample
 AppController::SceneMode::BenchmarkGradient
 AppController::SceneMode::BenchmarkGradientUnbalancedTree
 AppController::SceneMode::NaryExample
-AppController::SceneMode::NaryConvexityTests
 AppController::SceneMode::CADjunction
 ```
 

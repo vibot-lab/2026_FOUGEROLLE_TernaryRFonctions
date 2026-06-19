@@ -4,7 +4,7 @@
  * Update               : 2026-05-26
  * Original Copyright   : (C) 2002 by Michaël ROY
  * Contact              : michaelroy@users.sourceforge.net
- * * Refactored & Edited  : Yohan Fougerolle
+ * Refactored & Edited  : Yohan Fougerolle
  * Affiliation          : Université Bourgogne Europe / IMVIA UR 7535
  * Warning              : Designed strictly for triangular meshes!
  *
