@@ -24,17 +24,34 @@ If you find this paper or code useful for your research, please cite our work:
 ```
 
 ## Table of contents
-
-- [Overview](#overview)
-- [Repository structure](#repository-structure)
-- [Requirements](#requirements)
-- [Installation](#installation)
-  - [Windows](#windows)
-  - [Linux](#linux)
-- [Running the application](#running-the-application)
-- [Application modes](#application-modes)
-- [Configuration file](#configuration-file)
-- [Citation](#citation)
+- [Constructing Associative Ternary R-functions](#constructing-associative-ternary-r-functions)
+  - [Citation](#citation)
+  - [Table of contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Repository structure](#repository-structure)
+  - [Requirements](#requirements)
+  - [Install on Windows with Visual Studio and `vcpkg`](#install-on-windows-with-visual-studio-and-vcpkg)
+    - [Installing vcpkg](#installing-vcpkg)
+    - [Installing dependencies with vcpkg](#installing-dependencies-with-vcpkg)
+    - [Configuring the project in Visual Studio](#configuring-the-project-in-visual-studio)
+  - [Install on Linux / Ubuntu / Debian](#install-on-linux--ubuntu--debian)
+    - [Install system dependencies](#install-system-dependencies)
+    - [Compile](#compile)
+    - [Run](#run)
+  - [Application modes](#application-modes)
+  - [Configuration file](#configuration-file)
+    - [`common`](#common)
+    - [`field_render`](#field_render)
+    - [`cad_junction`](#cad_junction)
+    - [Benchmark sections](#benchmark-sections)
+  - [Interactive controls](#interactive-controls)
+  - [Method](#method)
+  - [Mesh reconstruction pipeline](#mesh-reconstruction-pipeline)
+  - [Results reported in the paper](#results-reported-in-the-paper)
+    - [Gradient behavior](#gradient-behavior)
+    - [Newton-Raphson convergence](#newton-raphson-convergence)
+    - [CAD reconstruction](#cad-reconstruction)
+  - [License](#license)
 
 ## Overview
 
@@ -109,7 +126,7 @@ The project is written in **C++17** and uses CMake. The current build requires:
 - Eigen3;
 - yaml-cpp.
 
-## Option A: Windows with Visual Studio and `vcpkg`
+## Install on Windows with Visual Studio and `vcpkg`
 
 On Windows 10 or Windows 11, the recommended workflow is to use `vcpkg` to
 install the dependencies, and Visual Studio for compilation and testing.
@@ -173,7 +190,7 @@ name and `${workspaceRoot}\config.yaml`. By including this file in the
 repository, Visual Studio recognizes the different tasks and creates the test
 options as required.
 
-## Option B: Linux / Ubuntu / Debian
+## Install on Linux / Ubuntu / Debian
 
 ### Install system dependencies
 Open a terminal and install the required development kits and libraries via apt:
