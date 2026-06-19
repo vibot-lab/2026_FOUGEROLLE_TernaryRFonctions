@@ -552,9 +552,9 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        const ApplicationMode mode = AppConfig::ParseApplicationMode(argv0);
+        const ApplicationMode mode = AppConfig::ParseApplicationMode(argv[1]);
 
-        const std::string configPath = argv1;
+        const std::string configPath = argv[2];
 
         AppConfig config(configPath);
 
