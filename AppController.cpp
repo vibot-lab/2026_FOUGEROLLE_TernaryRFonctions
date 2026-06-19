@@ -67,7 +67,6 @@ void AppController::Init(int& argc, char** argv) {
     // classical example mode ==> simple implicit scene (3 spheres or a regular polygon)
     if (currentMode == SceneMode::ClassicalExample)
     {
- 
         // 3 spheres as in the CAD paper
         makeSpheres();
 
@@ -2133,3 +2132,4 @@ void AppController::makePolygon(int n_sides, const double radius) {
         m_objects.push_back(std::make_shared<ImplicitPlane>(pStart, pEnd));
     }
 }
+
