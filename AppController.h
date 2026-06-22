@@ -91,7 +91,7 @@ public:
     int Rvachev_m = 1;        ///< The 'm' regularization parameter for Rvachev N-ary R-functions
     double epsilon_crit = 1.0; ///< Critical threshold parameter used for convexity boundary tests
 
-    // domain definition for the epsilon values. 
+    // domain definition for the epsilon values.
     double convex_min, convex_max;
     int sample_convex;
 

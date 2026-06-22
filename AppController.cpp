@@ -433,7 +433,7 @@ void AppController::updateActiveListIndex() {
 
         std::string opName = m_isIntersection ? "INTERSECTION" : "UNION";
 
-        if (currentMode == AppController::SceneMode::ClassicalExample             
+        if (currentMode == AppController::SceneMode::ClassicalExample
             ||
             currentMode == AppController::SceneMode::NaryExample
             ) {
