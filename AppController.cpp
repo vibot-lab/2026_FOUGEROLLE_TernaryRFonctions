@@ -310,7 +310,7 @@ std::vector<std::shared_ptr<ImplicitObject>> AppController::MakeDaisyConvexTest(
      if (currentMode != SceneMode::CADjunction)
      {
          // 1. Core structural field potentials computations passes
-         
+
          if (currentMode == SceneMode::NaryExample || currentMode == SceneMode::ClassicalExample)
          {
              std::cout << "\t --Grid sampling density: "
