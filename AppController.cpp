@@ -414,29 +414,8 @@ std::vector<std::shared_ptr<ImplicitObject>> AppController::MakeDaisyConvexTest(
 
              glNewList(listId, GL_COMPILE);
 
-             // Pass A: Compile open boundary outline structures
-             glDisable(GL_LIGHTING);
              Mesh.DrawBoundaryEdges();
-
-             glEnable(GL_DEPTH_TEST);
-             glEnable(GL_LIGHTING);
-
-             // Pass B: Compile solid surface manifold faces primitives
-             glEnable(GL_POLYGON_OFFSET_FILL);
-             glPolygonOffset(1.0, 1.0); // Displace solid faces back slightly to cleanly illuminate overlapping wireframes
-             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-             glColor3f(0.8f, 0.8f, 1.0f);
              Mesh.Draw(FACE_NORMAL);
-             glDisable(GL_POLYGON_OFFSET_FILL);
-
-             // Pass C: Compile topological wireframe tracking lines overlays
-             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-             glLineWidth(1.0f);
-             glColor3f(0.0f, 0.0f, 0.5f);
-             Mesh.Draw(FACE_NORMAL);
-
-             // Reset system rendering modes back to global structural defaults
-             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
              glEndList();
          }
