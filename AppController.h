@@ -104,6 +104,8 @@ public:
 
     // Graphical State Flags & OpenGL References
     bool gradients = false;          ///< Active flag for tracking gradient field rendering
+    bool m_showFilled = true;
+    bool m_showWireframe = true;
     int active_list_idx;             ///< Render target list index linked to active R-function
     int m_activeMethod = 0;
     int m_activeMeshId;              ///< Target OpenGL list reference ID

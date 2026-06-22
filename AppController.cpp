@@ -414,8 +414,39 @@ std::vector<std::shared_ptr<ImplicitObject>> AppController::MakeDaisyConvexTest(
 
              glNewList(listId, GL_COMPILE);
 
+             // Keep boundary edges visible independently of the two mesh modes.
+             glDisable(GL_LIGHTING);
              Mesh.DrawBoundaryEdges();
-             Mesh.Draw(FACE_NORMAL);
+
+             glEnable(GL_DEPTH_TEST);
+
+             // Filled triangles.
+             if (m_showFilled) {
+                 glEnable(GL_LIGHTING);
+
+                 glEnable(GL_POLYGON_OFFSET_FILL);
+                 glPolygonOffset(1.0f, 1.0f);
+
+                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                 glColor3f(0.8f, 0.8f, 1.0f);
+                 Mesh.Draw(FACE_NORMAL);
+
+                 glDisable(GL_POLYGON_OFFSET_FILL);
+             }
+
+             // Triangle-edge overlay.
+             if (m_showWireframe) {
+                 glDisable(GL_LIGHTING);
+
+                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                 glLineWidth(1.0f);
+                 glColor3f(0.0f, 0.0f, 0.5f);
+                 Mesh.Draw(FACE_NORMAL);
+             }
+
+             // Restore a stable OpenGL state.
+             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+             glEnable(GL_LIGHTING);
 
              glEndList();
          }
@@ -517,17 +548,21 @@ void AppController::KeyboardCallback(unsigned char key, int x, int y) {
         }
     } break;
 
-    case 'w': case 'W':
-    {
-        glDisable(GL_LIGHTING);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Enable wireframe debug view
-    } break;
+    case 'w':
+    case 'W':
+        if (s_instance->currentMode == SceneMode::CADjunction) {
+            s_instance->m_showWireframe = !s_instance->m_showWireframe;
+            s_instance->ComputeAndBufferMesh(s_instance->m_sampling);
+        }
+        break;
 
-    case 'f': case 'F':
-    {
-        glEnable(GL_LIGHTING);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Restore solid mesh shading
-    } break;
+    case 'f':
+    case 'F':
+        if (s_instance->currentMode == SceneMode::CADjunction) {
+            s_instance->m_showFilled = !s_instance->m_showFilled;
+            s_instance->ComputeAndBufferMesh(s_instance->m_sampling);
+        }
+        break;
 
     case 27: // System close call triggered via Escape key mapping bounds
         std::cout << "[SYSTEM] Closing application..." << std::endl;
