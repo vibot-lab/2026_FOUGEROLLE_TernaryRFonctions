@@ -528,10 +528,21 @@ void AppController::KeyboardCallback(unsigned char key, int x, int y) {
 
     case 'r':
     case 'R':
-        // Reset viewport tracking orientation tables
         s_instance->m_scene.Object_Move = Eigen::Vector3d(0.0, 0.0, 0.0);
         s_instance->m_scene.rotation_matrix = Eigen::Matrix4d::Identity();
-        std::cout << "[VIEW] Resetting rotation and zoom" << std::endl;
+
+        // Reset zoom and camera view.
+        s_instance->m_scene.camPos = Eigen::Vector3d(0.0, 0.0, 5.0);
+        s_instance->m_scene.camTarget = Eigen::Vector3d(0.0, 0.0, 0.0);
+
+        if (s_instance->currentMode == SceneMode::CADjunction) {
+            s_instance->m_showFilled = true;
+            s_instance->m_showWireframe = true;
+            s_instance->ComputeAndBufferMesh(s_instance->m_sampling);
+        }
+
+        std::cout << "[VIEW] Resetting view and restoring filled + wireframe mode"
+                << std::endl;
         break;
 
     case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
