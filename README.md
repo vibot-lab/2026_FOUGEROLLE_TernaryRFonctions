@@ -16,10 +16,14 @@ If you find this paper or code useful for your research, please cite our work:
 
 ```bibtex
 @article{ternary_r_functions_2026,
-  title   = {Constructing Associative Ternary R-functions: A Geometric Perspective},
-  author  = {Yohan Fougerolle, Joaquin Rodriguez, Aurore Gabon, Johan Gielis},
-  journal = {Computer-aided design (CAD)},
-  year    = {2026}
+  title = {Constructing associative ternary R-functions: A geometric perspective},
+  journal = {Computer-Aided Design},
+  pages = {104131},
+  year = {2026},
+  issn = {0010-4485},
+  doi = {https://doi.org/10.1016/j.cad.2026.104131},
+  url = {https://www.sciencedirect.com/science/article/pii/S0010448526001016},
+  author = {Yohan Fougerolle and Joaquin Rodriguez and Aurore Gabon and Johan Gielis}
 }
 ```
 
